@@ -19,9 +19,17 @@ export default function Footer() {
                 </div>
                 <div>
                     <h3 className="text-white font-bold text-lg mb-4">Contacto</h3>
-                    <ul className="space-y-2 text-sm flex flex-col">
-                        <li className="flex items-center gap-2"><Phone className="w-4 h-4 text-brand-yellow" /> +57 305 426 5677</li>
-                        <li className="flex items-center gap-2"><Mail className="w-4 h-4 text-brand-yellow" /> consumaquinayequipos@icloud.com</li>
+                    <ul className="space-y-3 text-sm flex flex-col">
+                        <li>
+                            <a href="tel:+573054265677" className="flex items-center gap-2 hover:text-brand-yellow transition-colors">
+                                <Phone className="w-4 h-4 text-brand-yellow" /> +57 305 426 5677
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:consumaquinayequipos@icloud.com" className="flex items-center gap-2 hover:text-brand-yellow transition-colors break-all">
+                                <Mail className="w-4 h-4 text-brand-yellow shrink-0" /> consumaquinayequipos@icloud.com
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div>
@@ -30,7 +38,7 @@ export default function Footer() {
                         <a href="https://instagram.com/consumaquinayequipos" target="_blank" rel="noopener noreferrer" className="hover:text-brand-yellow">
                             <Instagram className="w-6 h-6" />
                         </a>
-                        <a href="https://facebook.com/consumaquinayequipos" target="_blank" rel="noopener noreferrer" className="hover:text-brand-yellow">
+                        <a href="https://facebook.com/profile.php?id=61567117565706" target="_blank" rel="noopener noreferrer" className="hover:text-brand-yellow">
                             <Facebook className="w-6 h-6" />
                         </a>
                     </div>

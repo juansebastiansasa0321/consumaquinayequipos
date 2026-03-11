@@ -59,7 +59,7 @@ export default async function Home() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-brand-black">
+      <section className="relative w-full h-[60vh] md:h-[80vh] min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden bg-brand-black">
         <div className="absolute inset-0 z-0">
           <Image
             src={featuredMachine.images?.[0] || "/zoomlion.png"}
@@ -75,10 +75,10 @@ export default async function Home() {
           <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow font-semibold text-sm tracking-widest uppercase">
             Especialistas en Maquinaria Pesada
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6">
-            Potencia para <span className="text-brand-yellow text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-yellow-600">Minería e Infraestructura</span>
+          <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6">
+            Potencia para <br className="md:hidden" /><span className="text-brand-yellow text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-yellow-600">Minería e Infraestructura</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+          <p className="text-base md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
             Distribución especializada de excavadoras de 21 toneladas y motores industriales para las regiones de Chocó y Cauca.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
@@ -99,10 +99,10 @@ export default async function Home() {
       </section>
 
       {/* Featured Machine Section */}
-      <section className="py-24 bg-brand-black text-white px-4">
+      <section className="py-16 md:py-24 bg-brand-black text-white px-4">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1 relative h-[500px] rounded-2xl overflow-hidden border border-brand-gray/30 group">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div className="order-2 md:order-1 relative h-[300px] md:h-[500px] rounded-2xl overflow-hidden border border-brand-gray/30 group">
               <Image
                 src={featuredMachine.images?.[0] || "/zoomlion.png"}
                 alt={featuredMachine.title}
@@ -116,8 +116,8 @@ export default async function Home() {
               </div>
             </div>
             <div className="order-1 md:order-2">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">Máquina <span className="text-brand-yellow">Destacada</span></h2>
-              <p className="text-gray-400 mb-8 text-lg line-clamp-4">
+              <h2 className="text-2xl md:text-5xl font-bold mb-4 md:mb-6">Máquina <span className="text-brand-yellow">Destacada</span></h2>
+              <p className="text-gray-400 mb-6 md:mb-8 text-base md:text-lg line-clamp-4">
                 {featuredMachine.description || "El equipo ideal para proyectos de alto rendimiento."}
               </p>
 
