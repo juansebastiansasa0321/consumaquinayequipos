@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Clock, MapPin, Tag, CheckCircle2 } from "lucide-react";
-import { sql } from "@vercel/postgres";
+import { sql } from "@/lib/db";
 import { notFound } from "next/navigation";
 
 // Type matches the one in page.tsx
@@ -22,7 +22,7 @@ async function getMachine(id: string): Promise<Machine | null> {
         const numericId = parseInt(id, 10);
         if (isNaN(numericId)) return null;
 
-        const { rows } = await sql`SELECT * FROM machines WHERE id = ${numericId}`;
+        const rows = await sql`SELECT * FROM machines WHERE id = ${numericId}`;
         if (rows.length === 0) return null;
         return rows[0] as Machine;
     } catch (error) {

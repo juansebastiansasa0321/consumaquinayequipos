@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sql } from "@vercel/postgres";
+import { sql } from "@/lib/db";
 
 export async function POST(req: Request) {
     try {
@@ -68,7 +68,7 @@ export async function GET() {
              data = await sql`SELECT * FROM contacts`;
         }
         
-        return NextResponse.json(data.rows);
+        return NextResponse.json(data);
     } catch (error) {
         console.error("Error fetching contacts:", error);
         return NextResponse.json({ error: "No se pudieron obtener los contactos" }, { status: 500 });

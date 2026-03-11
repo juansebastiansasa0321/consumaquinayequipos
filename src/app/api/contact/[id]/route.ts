@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sql } from "@vercel/postgres";
+import { sql } from "@/lib/db";
 
 // Delete a contact
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {

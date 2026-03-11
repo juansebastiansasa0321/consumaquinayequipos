@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, MapPin, Gauge, Star } from "lucide-react";
-import { sql } from "@vercel/postgres";
+import { sql } from "@/lib/db";
 
 // Types
 type Machine = {
@@ -24,7 +24,7 @@ async function getMachines(): Promise<Machine[]> {
       // Just return mock data without throwing, else Next breaks on the server component
       return getMockHomeMachines();
     }
-    const { rows } = await sql`SELECT * FROM machines ORDER BY display_order ASC, created_at DESC LIMIT 6`;
+    const rows = await sql`SELECT * FROM machines ORDER BY display_order ASC, created_at DESC LIMIT 6`;
     return rows as Machine[];
   } catch (error) {
     console.error("No se pudo conectar a la base de datos o la tabla no existe:", error);
