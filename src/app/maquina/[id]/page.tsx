@@ -31,13 +31,14 @@ async function getMachine(id: string): Promise<Machine | null> {
     }
 }
 
-export default async function MachineDetailPage({ params }: { params: { id: string } }) {
-    const machine = await getMachine(params.id);
+export default async function MachineDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const machine = await getMachine(id);
 
     if (!machine) {
         // If DB is not connected locally, we mock it for development visualization.
         if (process.env.NODE_ENV === "development" && !process.env.POSTGRES_URL) {
-            return <MockMachineDetail id={params.id} />;
+            return <MockMachineDetail id={id} />;
         }
         notFound();
     }
