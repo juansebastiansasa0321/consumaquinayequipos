@@ -3,11 +3,14 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request): Promise<NextResponse> {
     const { searchParams } = new URL(request.url);
-    const filename = searchParams.get("filename");
+    const originalFilename = searchParams.get("filename");
 
-    if (!filename) {
+    if (!originalFilename) {
         return NextResponse.json({ error: "Filename is required" }, { status: 400 });
     }
+
+    // Add a timestamp to the filename to prevent overwriting images with the same name
+    const filename = `${Date.now()}-${originalFilename}`;
 
     if (!request.body) {
         return NextResponse.json({ error: "Request body is missing" }, { status: 400 });
