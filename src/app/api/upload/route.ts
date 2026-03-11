@@ -22,15 +22,8 @@ export async function POST(request: Request): Promise<NextResponse> {
         });
 
         return NextResponse.json(blob);
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error uploading to Vercel Blob. Make sure BLOB_READ_WRITE_TOKEN is set:", error);
-        // Return a mocked successful response strictly for local development if token is missing
-        return NextResponse.json({
-            url: `/zoomlion.png`,
-            downloadUrl: `/zoomlion.png`,
-            pathname: "mock-image.png",
-            contentType: "image/png",
-            contentDisposition: "inline"
-        });
+        return NextResponse.json({ error: error.message || "Error al subir a Vercel Blob" }, { status: 500 });
     }
 }
