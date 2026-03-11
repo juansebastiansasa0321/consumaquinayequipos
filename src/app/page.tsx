@@ -218,6 +218,23 @@ export default async function Home() {
               <p className="text-sm text-gray-400 mt-4">(Si eres el administrador, sube máquinas desde el Dashboard)</p>
             </div>
           )}
+
+          {/* CTA Banner for Unlisted Machines */}
+          <div className="mt-16 bg-brand-black rounded-3xl p-8 md:p-12 text-center text-white border border-brand-gray/20 shadow-xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-yellow/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+            
+            <h3 className="text-2xl md:text-4xl font-bold mb-4 relative z-10">¿No encuentras la máquina que buscas?</h3>
+            <p className="text-gray-400 mb-8 max-w-2xl mx-auto text-lg relative z-10">
+              Contamos con una amplia red de proveedores. Contáctanos indicando el equipo exacto que necesitas y nosotros lo conseguimos para ti al mejor precio.
+            </p>
+            <Link 
+              href="/contacto" 
+              className="inline-flex items-center gap-2 bg-brand-yellow text-brand-black px-8 py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors relative z-10 shadow-lg"
+            >
+              Consultar Equipo Específico <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>
