@@ -19,7 +19,10 @@ type Machine = {
 
 async function getMachine(id: string): Promise<Machine | null> {
     try {
-        const { rows } = await sql`SELECT * FROM machines WHERE id = ${id}`;
+        const numericId = parseInt(id, 10);
+        if (isNaN(numericId)) return null;
+
+        const { rows } = await sql`SELECT * FROM machines WHERE id = ${numericId}`;
         if (rows.length === 0) return null;
         return rows[0] as Machine;
     } catch (error) {

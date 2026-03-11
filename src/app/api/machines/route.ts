@@ -3,7 +3,7 @@ import { sql } from "@vercel/postgres";
 
 export async function GET() {
     try {
-        const { rows } = await sql`SELECT * FROM machines ORDER BY created_at DESC`;
+        const { rows } = await sql`SELECT * FROM machines ORDER BY display_order ASC, created_at DESC`;
         return NextResponse.json({ machines: rows });
     } catch (error) {
         console.error("DB GET Error:", error);
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
         // For simplicity, assuming tags and images are arrays of strings. Let's serialize arrays to postgres array syntax manually or use JSON.
         // Given schema is TEXT[], we can pass an array in the tagged template logic.
         await sql`
-      INSERT INTO machines (title, description, price, hours, location, tags, images)
+      INSERT INTO machines (title, description, price, hours, location, tags, images, display_order, is_featured)
       VALUES (
         ${title},
         ${description},
@@ -29,7 +29,9 @@ export async function POST(req: Request) {
         ${hours ? Number(hours) : null},
         ${location},
         ${tags as any}, 
-        ${images as any}
+        ${images as any},
+        0,
+        false
       )
     `;
 

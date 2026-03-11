@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, MapPin, Gauge } from "lucide-react";
+import { ArrowRight, CheckCircle2, MapPin, Gauge, Star } from "lucide-react";
 import { sql } from "@vercel/postgres";
 
 // Types
@@ -14,6 +14,7 @@ type Machine = {
   location: string;
   tags: string[];
   images: string[];
+  is_featured?: boolean;
 };
 
 // Data Fetching with graceful degradation
@@ -23,7 +24,7 @@ async function getMachines(): Promise<Machine[]> {
       // Just return mock data without throwing, else Next breaks on the server component
       return getMockHomeMachines();
     }
-    const { rows } = await sql`SELECT * FROM machines ORDER BY created_at DESC LIMIT 6`;
+    const { rows } = await sql`SELECT * FROM machines ORDER BY display_order ASC, created_at DESC LIMIT 6`;
     return rows as Machine[];
   } catch (error) {
     console.error("No se pudo conectar a la base de datos o la tabla no existe:", error);
@@ -53,6 +54,7 @@ function getMockHomeMachines(): Machine[] {
 
 export default async function Home() {
   const machines = await getMachines();
+  const featuredMachine = machines.find(m => m.is_featured) || machines[0] || getMockHomeMachines()[0];
 
   return (
     <div className="w-full">
@@ -60,8 +62,8 @@ export default async function Home() {
       <section className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-brand-black">
         <div className="absolute inset-0 z-0">
           <Image
-            src="/zoomlion.png"
-            alt="Excavadora Zoomlion 21 Toneladas"
+            src={featuredMachine.images?.[0] || "/zoomlion.png"}
+            alt={featuredMachine.title}
             fill
             className="object-cover opacity-40"
             priority
@@ -102,44 +104,51 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1 relative h-[500px] rounded-2xl overflow-hidden border border-brand-gray/30 group">
               <Image
-                src="/zoomlion.png"
-                alt="Zoomlion 21T"
+                src={featuredMachine.images?.[0] || "/zoomlion.png"}
+                alt={featuredMachine.title}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-              <div className="absolute bottom-6 left-6 text-white font-bold text-2xl">
-                Zoomlion 21T
+              <div className="absolute bottom-6 left-6 text-white font-bold text-2xl flex items-center gap-2">
+                {featuredMachine.title}
+                {featuredMachine.is_featured && <Star className="w-5 h-5 text-brand-yellow fill-brand-yellow" />}
               </div>
             </div>
             <div className="order-1 md:order-2">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">Excavadora <span className="text-brand-yellow">Zoomlion 21 Ton</span></h2>
-              <p className="text-gray-400 mb-8 text-lg">
-                El equipo ideal para proyectos de alto rendimiento. Nuestra excavadora de 21 toneladas ofrece eficiencia de combustible superior, cabina reforzada y la potencia hidráulica necesaria para los terrenos más exigentes del Chocó y el Cauca.
+              <h2 className="text-3xl md:text-5xl font-bold mb-6">Máquina <span className="text-brand-yellow">Destacada</span></h2>
+              <p className="text-gray-400 mb-8 text-lg line-clamp-4">
+                {featuredMachine.description || "El equipo ideal para proyectos de alto rendimiento."}
               </p>
 
               <div className="space-y-4 mb-8">
-                {[
-                  "Motor optimizado para trabajo continuo en condiciones extremas",
-                  "Mantenimiento simplificado para máxima disponibilidad",
-                  "Capacidad de balde ideal para alto volumen de movimiento de tierra",
-                  "Servicio y repuestos garantizados en la región"
-                ].map((feature, i) => (
+                {featuredMachine.tags?.slice(0, 4).map((tag, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <CheckCircle2 className="w-6 h-6 text-brand-yellow shrink-0 mt-0.5" />
-                    <span className="text-gray-300">{feature}</span>
+                    <span className="text-gray-300 font-medium">{tag}</span>
                   </div>
                 ))}
+                {(!featuredMachine.tags || featuredMachine.tags.length === 0) && (
+                   <div className="flex items-start gap-3">
+                     <CheckCircle2 className="w-6 h-6 text-brand-yellow shrink-0 mt-0.5" />
+                     <span className="text-gray-300">Garantía y entrega inmediata</span>
+                 </div>
+                )}
               </div>
 
-              <a
-                href="https://wa.me/573054265677?text=Hola,%20quiero%20más%20información%20sobre%20la%20Zoomlion%2021T"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 text-brand-yellow font-bold hover:underline"
-              >
-                Consultar disponibilidad <ArrowRight className="w-4 h-4" />
-              </a>
+              <div className="flex items-center gap-4">
+                  <a
+                    href={`https://wa.me/573054265677?text=Hola,%20quiero%20más%20información%20sobre%20${encodeURIComponent(featuredMachine.title)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-brand-yellow font-bold hover:underline"
+                  >
+                    Consultar disponibilidad <ArrowRight className="w-4 h-4" />
+                  </a>
+                  <Link href={`/maquina/${featuredMachine.id}`} className="px-5 py-2 rounded-lg border border-gray-600 hover:bg-white hover:text-black transition-colors font-semibold text-sm">
+                    Ver más fotos
+                  </Link>
+              </div>
             </div>
           </div>
         </div>

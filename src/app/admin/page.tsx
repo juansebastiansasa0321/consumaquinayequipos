@@ -1,7 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { Upload, Plus, X, Loader2, Save } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Upload, Plus, X, Loader2, Save, Trash2, Star, ArrowUp, ArrowDown } from "lucide-react";
+
+type Machine = {
+    id: string;
+    title: string;
+    price: number;
+    hours: number;
+    location: string;
+    tags: string[];
+    images: string[];
+    is_featured: boolean;
+    display_order: number;
+};
 
 export default function AdminDashboard() {
     const [loading, setLoading] = useState(false);
@@ -11,18 +23,35 @@ export default function AdminDashboard() {
     const [tags, setTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState("");
 
+    const [machines, setMachines] = useState<Machine[]>([]);
+    const [isFetching, setIsFetching] = useState(true);
+
+    const fetchMachines = async () => {
+        setIsFetching(true);
+        try {
+            const res = await fetch("/api/machines");
+            const data = await res.json();
+            if (data.machines) setMachines(data.machines);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsFetching(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMachines();
+    }, []);
+
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;
-
         setLoading(true);
         const file = e.target.files[0];
         try {
-            // Connect to the Vercel Blob via our API route
             const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
                 method: "POST",
                 body: file,
             });
-
             const blob = await response.json();
             if (blob.url) {
                 setImages(prev => [...prev, blob.url]);
@@ -80,6 +109,7 @@ export default function AdminDashboard() {
                 (e.target as HTMLFormElement).reset();
                 setTags([]);
                 setImages([]);
+                fetchMachines(); // Refresh list
             } else {
                 const err = await res.json();
                 alert(err.error || "Error al guardar en BD");
@@ -92,106 +122,235 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        if (!confirm("¿Seguro que deseas eliminar esta máquina?")) return;
+        try {
+            await fetch(`/api/machines/${id}`, { method: 'DELETE' });
+            fetchMachines();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleFeature = async (id: string) => {
+        try {
+            await fetch(`/api/machines/${id}`, {
+                method: 'PUT',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ is_featured: true })
+            });
+            fetchMachines();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleOrder = async (machine: Machine, direction: 'up' | 'down') => {
+        const currentIndex = machines.findIndex(m => m.id === machine.id);
+        if (direction === 'up' && currentIndex === 0) return;
+        if (direction === 'down' && currentIndex === machines.length - 1) return;
+
+        const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+        const targetMachine = machines[targetIndex];
+
+        // Swap their display_order values
+        const currentOrder = machine.display_order || currentIndex;
+        const targetOrder = targetMachine.display_order || targetIndex;
+
+        try {
+            await Promise.all([
+                fetch(`/api/machines/${machine.id}`, {
+                    method: 'PUT',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ display_order: targetOrder })
+                }),
+                fetch(`/api/machines/${targetMachine.id}`, {
+                    method: 'PUT',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ display_order: currentOrder })
+                })
+            ]);
+            fetchMachines();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4">
-            <div className="max-w-4xl mx-auto">
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-brand-black">Panel de Administración</h1>
-                    <p className="text-gray-500">Agrega nuevas maquinarias al catálogo público.</p>
+            <div className="max-w-4xl mx-auto space-y-12">
+                
+                {/* Section 1: Create */}
+                <div>
+                    <div className="mb-8">
+                        <h1 className="text-3xl font-bold text-brand-black">Panel de Administración</h1>
+                        <p className="text-gray-500">Agrega nuevas maquinarias al catálogo público.</p>
+                    </div>
+
+                    {success && (
+                        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
+                            <strong className="font-bold">¡Éxito! </strong>
+                            <span className="block sm:inline">Máquina guardada correctamente en el catálogo.</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-8">
+                        {/* Images Section */}
+                        <section>
+                            <h2 className="text-xl font-bold border-b pb-2 mb-4 text-brand-black">Fotos de la Máquina</h2>
+                            <div className="flex flex-wrap gap-4 mb-4">
+                                {images.map(img => (
+                                    <div key={img} className="relative w-32 h-32 rounded-lg border overflow-hidden">
+                                        <img src={img} alt="Uploaded" className="object-cover w-full h-full" />
+                                        <button type="button" onClick={() => removeImage(img)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <label className="w-32 h-32 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                    {loading ? <Loader2 className="animate-spin w-8 h-8 text-gray-400" /> : <Upload className="w-8 h-8 text-gray-400" />}
+                                    <span className="text-xs text-gray-500 mt-2">Subir Foto</span>
+                                    <input type="file" accept="image/*" onChange={handleFileUpload} disabled={loading} className="hidden" />
+                                </label>
+                            </div>
+                            <p className="text-xs text-gray-500">Nota: Al subir la foto se guarda en Vercel Blob automáticamente.</p>
+                        </section>
+
+                        {/* Details Section */}
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="col-span-2">
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Título / Nombre del Equipo *</label>
+                                <input required name="title" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Ej: Excavadora Zoomlion 21T" />
+                            </div>
+
+                            <div className="col-span-2">
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Descripción Completa</label>
+                                <textarea name="description" rows={5} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Características detalladas, estado, mantenimientos..."></textarea>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Precio (COP)</label>
+                                <input type="number" name="price" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Ej: 350000000" />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Horas de Uso</label>
+                                <input type="number" name="hours" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Ej: 1200" />
+                            </div>
+
+                            <div className="col-span-2">
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Ubicación</label>
+                                <input name="location" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Ej: Quibdó, Chocó" />
+                            </div>
+                        </section>
+
+                        {/* Tags Section */}
+                        <section>
+                            <label className="block text-sm font-semibold text-gray-900 mb-2">Etiquetas (Visibles en las cards)</label>
+                            <div className="flex gap-2 mb-3">
+                                <input
+                                    value={tagInput}
+                                    onChange={e => setTagInput(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-yellow/50 text-gray-900 bg-white"
+                                    placeholder="Ej: Oportunidad, Entrega Inmediata"
+                                />
+                                <button type="button" onClick={addTag} className="bg-gray-100 text-gray-900 hover:bg-gray-200 px-4 rounded-lg flex items-center font-semibold border border-gray-300">
+                                    <Plus className="w-4 h-4 mr-1" /> Añadir
+                                </button>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {tags.map(tag => (
+                                    <span key={tag} className="bg-brand-yellow/20 text-yellow-900 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1 border border-brand-yellow/30">
+                                        {tag} <button type="button" onClick={() => removeTag(tag)}><X className="w-3 h-3 hover:text-red-600" /></button>
+                                    </span>
+                                ))}
+                            </div>
+                        </section>
+
+                        <hr className="my-6 border-gray-200" />
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-brand-black text-white hover:bg-gray-900 font-bold py-4 rounded-xl shadow flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <Save className="w-5 h-5" />} Guardar Máquina en el Catálogo
+                        </button>
+                    </form>
                 </div>
 
-                {success && (
-                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6">
-                        <strong className="font-bold">¡Éxito! </strong>
-                        <span className="block sm:inline">Máquina guardada correctamente en el catálogo.</span>
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-8">
-
-                    {/* Images Section */}
-                    <section>
-                        <h2 className="text-xl font-bold border-b pb-2 mb-4">Fotos de la Máquina</h2>
-                        <div className="flex flex-wrap gap-4 mb-4">
-                            {images.map(img => (
-                                <div key={img} className="relative w-32 h-32 rounded-lg border overflow-hidden">
-                                    <img src={img} alt="Uploaded" className="object-cover w-full h-full" />
-                                    <button type="button" onClick={() => removeImage(img)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
-                                        <X className="w-4 h-4" />
-                                    </button>
+                {/* Section 2: Manage */}
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 className="text-2xl font-bold mb-6 text-brand-black">Catálogo Actual</h2>
+                    
+                    {isFetching ? (
+                        <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-gray-400" /></div>
+                    ) : machines.length === 0 ? (
+                        <p className="text-gray-500 text-center py-8">No hay máquinas en el catálogo.</p>
+                    ) : (
+                        <div className="space-y-4">
+                            {machines.map((machine, index) => (
+                                <div key={machine.id} className="flex items-center gap-4 p-4 border rounded-xl hover:border-brand-yellow/50 transition-colors bg-gray-50/50">
+                                    <div className="w-16 h-16 rounded-lg bg-gray-200 overflow-hidden flex-shrink-0 relative">
+                                        {machine.images?.[0] ? (
+                                            <img src={machine.images[0]} alt={machine.title} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-[10px] text-gray-500 flex h-full items-center justify-center text-center">Sin imagen</span>
+                                        )}
+                                        {machine.is_featured && (
+                                            <div className="absolute top-0 right-0 bg-brand-yellow p-0.5 rounded-bl-lg">
+                                                <Star className="w-3 h-3 text-brand-black fill-brand-black" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-bold text-gray-900 truncate flex items-center gap-2">
+                                            {machine.title}
+                                            {machine.is_featured && <span className="text-[10px] bg-brand-yellow px-2 py-0.5 rounded-full uppercase tracking-wider text-brand-black">Destacada</span>}
+                                        </h3>
+                                        <p className="text-sm text-gray-500 truncate">{machine.location} • ${machine.price?.toLocaleString()}</p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex flex-col gap-1 border-r pr-2 mr-2">
+                                            <button 
+                                                onClick={() => handleOrder(machine, 'up')}
+                                                disabled={index === 0}
+                                                className="p-1 hover:bg-gray-200 rounded text-gray-500 disabled:opacity-30 disabled:hover:bg-transparent"
+                                                title="Mover arriba"
+                                            >
+                                                <ArrowUp className="w-4 h-4" />
+                                            </button>
+                                            <button 
+                                                onClick={() => handleOrder(machine, 'down')}
+                                                disabled={index === machines.length - 1}
+                                                className="p-1 hover:bg-gray-200 rounded text-gray-500 disabled:opacity-30 disabled:hover:bg-transparent"
+                                                title="Mover abajo"
+                                            >
+                                                <ArrowDown className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                        <button 
+                                            onClick={() => handleFeature(machine.id)}
+                                            className={`p-2 rounded-lg transition-colors ${machine.is_featured ? 'bg-brand-yellow text-brand-black' : 'bg-gray-100 text-gray-600 hover:bg-yellow-100'}`}
+                                            title="Marcar como Destacada"
+                                        >
+                                            <Star className={`w-5 h-5 ${machine.is_featured ? 'fill-brand-black' : ''}`} />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDelete(machine.id)}
+                                            className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                                            title="Eliminar máquina"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
-                            <label className="w-32 h-32 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                                {loading ? <Loader2 className="animate-spin w-8 h-8 text-gray-400" /> : <Upload className="w-8 h-8 text-gray-400" />}
-                                <span className="text-xs text-gray-500 mt-2">Subir Foto</span>
-                                <input type="file" accept="image/*" onChange={handleFileUpload} disabled={loading} className="hidden" />
-                            </label>
                         </div>
-                        <p className="text-xs text-gray-400">Nota: Al subir la foto se guarda en Vercel Blob automáticamente.</p>
-                    </section>
-
-                    {/* Details Section */}
-                    <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Título / Nombre del Equipo *</label>
-                            <input required name="title" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none" placeholder="Ej: Excavadora Zoomlion 21T" />
-                        </div>
-
-                        <div className="col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción Completa</label>
-                            <textarea name="description" rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none" placeholder="Características detalladas, estado, mantenimientos..."></textarea>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Precio (COP)</label>
-                            <input type="number" name="price" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none" placeholder="Ej: 350000000" />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Horas de Uso</label>
-                            <input type="number" name="hours" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none" placeholder="Ej: 1200" />
-                        </div>
-
-                        <div className="col-span-2">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">Ubicación</label>
-                            <input name="location" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none" placeholder="Ej: Quibdó, Chocó" />
-                        </div>
-                    </section>
-
-                    {/* Tags Section */}
-                    <section>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Etiquetas (Visibles en las cards)</label>
-                        <div className="flex gap-2 mb-3">
-                            <input
-                                value={tagInput}
-                                onChange={e => setTagInput(e.target.value)}
-                                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                                className="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-brand-yellow/50"
-                                placeholder="Ej: Oportunidad, Entrega Inmediata"
-                            />
-                            <button type="button" onClick={addTag} className="bg-gray-100 hover:bg-gray-200 px-4 rounded-lg flex items-center font-semibold border">
-                                <Plus className="w-4 h-4 mr-1" /> Añadir
-                            </button>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                            {tags.map(tag => (
-                                <span key={tag} className="bg-brand-yellow/20 text-yellow-800 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
-                                    {tag} <button type="button" onClick={() => removeTag(tag)}><X className="w-3 h-3 hover:text-red-500" /></button>
-                                </span>
-                            ))}
-                        </div>
-                    </section>
-
-                    <hr className="my-6 border-gray-200" />
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-brand-black text-white hover:bg-gray-900 font-bold py-4 rounded-xl shadow flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                        {loading ? <Loader2 className="animate-spin w-5 h-5" /> : <Save className="w-5 h-5" />} Guardar Máquina en el Catálogo
-                    </button>
-                </form>
+                    )}
+                </div>
 
             </div>
         </div>
