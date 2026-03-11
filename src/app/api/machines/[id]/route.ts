@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 
 // Delete a machine
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const id = parseInt(params.id);
+        const { id: paramId } = await params;
+        const id = parseInt(paramId);
         if (isNaN(id)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
 
         await sql`DELETE FROM machines WHERE id = ${id}`;
@@ -16,9 +17,10 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 }
 
 // Update a machine (e.g. is_featured, display_order)
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const id = parseInt(params.id);
+        const { id: paramId } = await params;
+        const id = parseInt(paramId);
         if (isNaN(id)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
 
         const body = await req.json();
