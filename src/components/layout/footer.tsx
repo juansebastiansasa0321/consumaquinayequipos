@@ -27,6 +27,14 @@ export default function Footer() {
                     </ul>
                 </div>
                 <div>
+                    <h3 className="text-white font-bold text-lg mb-4">Recursos</h3>
+                    <ul className="space-y-2 text-sm flex flex-col">
+                        <li>
+                            <Link href="/blog" className="hover:text-brand-yellow transition-colors">Blog y Noticias</Link>
+                        </li>
+                    </ul>
+                </div>
+                <div>
                     <h3 className="text-white font-bold text-lg mb-4">Contacto</h3>
                     <ul className="space-y-3 text-sm flex flex-col">
                         <li>

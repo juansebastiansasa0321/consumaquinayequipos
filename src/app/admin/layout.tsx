@@ -11,6 +11,7 @@ export default function AdminLayout({
                     <div className="flex gap-6">
                         <a href="/admin" className="hover:text-brand-yellow transition-colors font-semibold">Maquinaria</a>
                         <a href="/admin/contactos" className="hover:text-brand-yellow transition-colors font-semibold">Contactos</a>
+                        <a href="/admin/blog" className="hover:text-brand-yellow transition-colors font-semibold">Blog SEO</a>
                     </div>
                 </div>
             </nav>

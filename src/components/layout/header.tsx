@@ -27,6 +27,7 @@ export default function Header() {
                 <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-300">
                     <Link href="/" className="hover:text-brand-yellow transition-colors">Inicio</Link>
                     <Link href="/#catalogo" className="hover:text-brand-yellow transition-colors">Catálogo</Link>
+                    <Link href="/blog" className="hover:text-brand-yellow transition-colors">Blog & Noticias</Link>
                     <Link href="/contacto" className="px-4 py-2 bg-brand-yellow text-brand-black rounded-md font-bold hover:bg-yellow-400 transition-colors">Contactar</Link>
                 </nav>
 
@@ -56,6 +57,13 @@ export default function Header() {
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Catálogo
+                        </Link>
+                        <Link 
+                            href="/blog" 
+                            className="hover:text-brand-yellow transition-colors block"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            Blog & Noticias
                         </Link>
                         <Link 
                             href="/contacto" 
