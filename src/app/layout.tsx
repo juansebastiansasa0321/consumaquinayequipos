@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="scroll-smooth">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-brand-background text-brand-foreground min-h-screen flex flex-col`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-brand-background text-brand-foreground min-h-screen flex flex-col overflow-x-hidden`}>
         <Header />
         <main className="flex-1">
           {children}
