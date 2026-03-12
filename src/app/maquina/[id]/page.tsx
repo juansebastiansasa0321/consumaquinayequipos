@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Clock, MapPin, CheckCircle2, Tag, ArrowRight, MessageCircle } from "lucide-react";
 import { sql } from "@/lib/db";
 import { notFound } from "next/navigation";
+import { MachineGallery } from "@/components/ui/machine-gallery";
 
 type Machine = {
     id: string;
@@ -34,7 +35,6 @@ async function getSimilarMachines(currentId: string, tags: string[]): Promise<Ma
     if (!tags || tags.length === 0) return [];
     try {
         const numericId = parseInt(currentId, 10);
-        // Find machines that share at least one tag (using Postgres array overlap operator &&)
         const rows = await sql`
             SELECT * FROM machines
             WHERE id != ${numericId}
@@ -52,14 +52,10 @@ async function getSimilarMachines(currentId: string, tags: string[]): Promise<Ma
 export default async function MachineDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const machine = await getMachine(id);
-
     if (!machine) {
-        if (process.env.NODE_ENV === "development") {
-            return <MockMachineDetail id={id} />;
-        }
+        if (process.env.NODE_ENV === "development") return <MockMachineDetail id={id} />;
         notFound();
     }
-
     const similar = await getSimilarMachines(id, machine.tags || []);
     return <MachineDetailView machine={machine} similar={similar} />;
 }
@@ -69,7 +65,7 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
 
     return (
         <div className="bg-gray-50 min-h-screen pb-24">
-            {/* Top Nav */}
+            {/* Sticky top nav */}
             <div className="bg-white border-b border-gray-200 py-3 sticky top-0 z-10 shadow-sm">
                 <div className="container mx-auto px-4">
                     <Link href="/#catalogo" className="inline-flex items-center text-gray-500 hover:text-brand-yellow font-medium transition-colors text-sm gap-1.5">
@@ -80,40 +76,11 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
 
             <div className="container mx-auto px-4 py-6 md:py-10 max-w-5xl">
 
-                {/* === HERO CARD: Image + Key Info unified === */}
+                {/* === HERO CARD === */}
                 <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden mb-6">
 
-                    {/* Image Gallery */}
-                    <div className="relative w-full aspect-[4/3] md:aspect-video md:h-[480px] bg-gray-100">
-                        {machine.images && machine.images.length > 0 ? (
-                            <Image
-                                src={machine.images[0]}
-                                alt={machine.title}
-                                fill
-                                className="object-cover"
-                                priority
-                            />
-                        ) : (
-                            <div className="flex items-center justify-center w-full h-full text-gray-400 font-medium">Sin imágenes</div>
-                        )}
-                        {/* Price overlay */}
-                        {machine.price && (
-                            <div className="absolute top-4 right-4 bg-brand-yellow text-brand-black font-black text-sm md:text-base px-4 py-2 rounded-full shadow-lg">
-                                ${machine.price.toLocaleString("es-CO")}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Thumbnails */}
-                    {machine.images && machine.images.length > 1 && (
-                        <div className="flex gap-3 px-4 pt-4 overflow-x-auto pb-1">
-                            {machine.images.map((img, idx) => (
-                                <div key={idx} className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden border-2 border-gray-200 shrink-0">
-                                    <Image src={img} alt={`Foto ${idx + 1}`} fill className="object-cover" />
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    {/* Interactive Gallery */}
+                    <MachineGallery images={machine.images} title={machine.title} />
 
                     {/* Tags */}
                     {machine.tags && machine.tags.length > 0 && (
@@ -132,39 +99,37 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                         <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500">
                             {machine.location && (
                                 <span className="flex items-center gap-1.5">
-                                    <MapPin className="w-4 h-4 text-brand-yellow" />
-                                    {machine.location}
+                                    <MapPin className="w-4 h-4 text-brand-yellow" /> {machine.location}
                                 </span>
                             )}
                             {machine.hours > 0 && (
                                 <span className="flex items-center gap-1.5">
-                                    <Clock className="w-4 h-4 text-brand-yellow" />
-                                    {machine.hours.toLocaleString()} horas de uso
+                                    <Clock className="w-4 h-4 text-brand-yellow" /> {machine.hours.toLocaleString()} horas de uso
                                 </span>
                             )}
                         </div>
                     </div>
 
-                    {/* Price block on mobile (below title) */}
-                    {!machine.price && (
-                        <div className="px-6 py-2">
-                            <span className="text-2xl font-black text-brand-black">A consultar</span>
-                        </div>
-                    )}
+                    {/* Price */}
+                    <div className="px-6 py-3">
+                        <span className="text-2xl md:text-3xl font-black text-brand-black">
+                            {machine.price ? `$${machine.price.toLocaleString("es-CO")}` : "Precio a consultar"}
+                        </span>
+                    </div>
 
                     {/* CTA Buttons */}
-                    <div className="px-6 py-5 flex flex-col sm:flex-row gap-3 border-t border-gray-100 mt-4">
+                    <div className="px-6 py-5 flex flex-col sm:flex-row gap-3 border-t border-gray-100">
                         <a
                             href={`https://wa.me/573054265677?text=${message}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex-1 flex items-center justify-center gap-2 bg-brand-yellow hover:bg-yellow-400 text-brand-black font-bold py-4 rounded-xl transition-all shadow-md shadow-brand-yellow/20 text-base"
+                            className="flex-1 flex items-center justify-center gap-2 bg-brand-yellow hover:bg-yellow-400 text-brand-black font-bold py-4 rounded-xl transition-all shadow-md shadow-brand-yellow/20"
                         >
                             <MessageCircle className="w-5 h-5" /> Contactar al Vendedor
                         </a>
                         <Link
                             href="/contacto"
-                            className="flex-1 flex items-center justify-center gap-2 border-2 border-brand-black text-brand-black font-bold py-4 rounded-xl hover:bg-brand-black hover:text-white transition-all text-base"
+                            className="flex-1 flex items-center justify-center gap-2 border-2 border-brand-black text-brand-black font-bold py-4 rounded-xl hover:bg-brand-black hover:text-white transition-all"
                         >
                             Solicitar Cotización
                         </Link>
@@ -174,7 +139,7 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                     </p>
                 </div>
 
-                {/* Description Card */}
+                {/* Description */}
                 {machine.description && (
                     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 md:p-8 mb-6">
                         <div className="flex items-center gap-3 mb-4">
@@ -187,24 +152,21 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                     </div>
                 )}
 
-                {/* === SIMILAR MACHINES (Amazon-style) === */}
+                {/* === SIMILAR MACHINES === */}
                 {similar.length > 0 && (
                     <div className="mt-8">
                         <div className="flex items-center gap-3 mb-5">
                             <div className="w-1 h-8 bg-brand-yellow rounded-full" />
                             <div>
-                                <p className="text-xs uppercase tracking-widest text-brand-yellow font-bold">Puedes necesitar también</p>
+                                <p className="text-xs uppercase tracking-widest text-brand-yellow font-bold">También te puede interesar</p>
                                 <h2 className="text-xl font-black text-brand-black">Equipos Similares</h2>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {similar.map(m => (
-                                <Link
-                                    href={`/maquina/${m.id}`}
-                                    key={m.id}
-                                    className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-brand-yellow/40 transition-all duration-300"
-                                >
+                                <Link href={`/maquina/${m.id}`} key={m.id}
+                                    className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-brand-yellow/40 transition-all duration-300">
                                     <div className="relative h-40 bg-gray-100 overflow-hidden">
                                         {m.images?.[0] ? (
                                             <Image src={m.images[0]} alt={m.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -247,12 +209,12 @@ function MockMachineDetail({ id }: { id: string }) {
     return <MachineDetailView similar={[]} machine={{
         id: id,
         title: "Excavadora Zoomlion ZE210E 21T (Demo)",
-        description: "Excavadora sobre orugas de 21 toneladas en perfecto estado operativo.\n\n- Mantenimientos al día.\n- Ideal para minería y movimiento de tierras.\n- Cabina reforzada panorámica.\n- Excelente rendimiento de combustible.",
+        description: "Excavadora sobre orugas de 21 toneladas en perfecto estado operativo.\n\n- Mantenimientos al día.\n- Ideal para minería y movimiento de tierras.\n- Cabina reforzada panorámica.",
         price: 350000000,
         hours: 1200,
         is_featured: true,
         location: "Quibdó, Chocó",
-        tags: ["Oportunidad", "Entrega Inmediata", "Destacado"],
+        tags: ["Oportunidad", "Entrega Inmediata"],
         images: ["/zoomlion.png"]
     }} />;
 }

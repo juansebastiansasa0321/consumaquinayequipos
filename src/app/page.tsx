@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, MapPin, Gauge, Star } from "lucide-react";
 import { sql } from "@/lib/db";
+import { CatalogSearch } from "@/components/ui/catalog-search";
 
 // Types
 type Machine = {
@@ -14,7 +15,7 @@ type Machine = {
   location: string;
   tags: string[];
   images: string[];
-  is_featured?: boolean;
+  is_featured: boolean;
 };
 
 // Data Fetching with graceful degradation
@@ -24,7 +25,7 @@ async function getMachines(): Promise<Machine[]> {
       // Just return mock data without throwing, else Next breaks on the server component
       return getMockHomeMachines();
     }
-    const rows = await sql`SELECT * FROM machines ORDER BY display_order ASC, created_at DESC LIMIT 6`;
+    const rows = await sql`SELECT * FROM machines ORDER BY display_order ASC, created_at DESC`;
     return rows as Machine[];
   } catch (error) {
     console.error("No se pudo conectar a la base de datos o la tabla no existe:", error);
@@ -41,11 +42,12 @@ function getMockHomeMachines(): Machine[] {
       description: "Excavadora sobre orugas de 21 toneladas en perfecto estado operativo. \n\n- Mantenimientos al día.\n- Ideal para minería y movimiento de tierras.\n- Cabina reforzada panorámica.\n- Excelente rendimiento de combustible.",
       price: 350000000,
       hours: 1200,
+      is_featured: true,
       location: "Quibdó, Chocó",
       tags: ["Oportunidad", "Entrega Inmediata", "Destacado"],
       images: [
         "/zoomlion.png",
-        "https://consumaquinayequipos.com/wp-content/uploads/2023/11/WhatsApp-Image-2023-11-20-at-3.08.35-PM.jpeg", // Using placeholders for a gallery
+        "https://consumaquinayequipos.com/wp-content/uploads/2023/11/WhatsApp-Image-2023-11-20-at-3.08.35-PM.jpeg",
         "https://consumaquinayequipos.com/wp-content/uploads/2023/11/WhatsApp-Image-2023-11-20-at-3.08.34-PM.jpeg"
       ]
     }
@@ -199,66 +201,8 @@ export default async function Home() {
             </p>
           </div>
 
-          {machines.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {machines.map((machine) => (
-                <Link href={`/maquina/${machine.id}`} key={machine.id} className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-brand-yellow/40 hover:-translate-y-1">
-                  <div className="relative h-52 sm:h-60 w-full bg-gray-100 overflow-hidden">
-                    {machine.images && machine.images.length > 0 ? (
-                      <Image
-                        src={machine.images[0]}
-                        alt={machine.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                        Sin imagen
-                      </div>
-                    )}
-                    {/* Featured badge */}
-                    {machine.is_featured && (
-                      <div className="absolute top-3 left-3 bg-brand-yellow text-brand-black text-xs font-black px-2.5 py-1 rounded-full flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-brand-black" /> Destacada
-                      </div>
-                    )}
-                    <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
-                      {machine.tags?.slice(0, 2).map(tag => (
-                        <span key={tag} className="bg-brand-black/75 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-brand-yellow transition-colors">{machine.title}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                      {machine.location && (
-                        <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {machine.location}</span>
-                      )}
-                      {machine.hours > 0 && (
-                        <span className="flex items-center gap-1"><Gauge className="w-4 h-4" /> {machine.hours}h</span>
-                      )}
-                    </div>
-                    <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                      <span className="font-black text-xl text-brand-black">
-                        ${machine.price ? machine.price.toLocaleString('es-CO') : "Consultar"}
-                      </span>
-                      <span className="text-brand-yellow font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Ver detalles <ArrowRight className="w-4 h-4" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
-              <h3 className="text-xl font-bold text-gray-400 mb-2">Catálogo en actualización</h3>
-              <p className="text-gray-500">Próximamente publicaremos nuestras máquinas disponibles.</p>
-              <p className="text-sm text-gray-400 mt-4">(Si eres el administrador, sube máquinas desde el Dashboard)</p>
-            </div>
-          )}
+          <CatalogSearch machines={machines} />
+
 
           {/* CTA Banner for Unlisted Machines */}
           <div className="mt-16 bg-brand-black rounded-3xl p-8 md:p-12 text-center text-white border border-brand-gray/20 shadow-xl overflow-hidden relative">
