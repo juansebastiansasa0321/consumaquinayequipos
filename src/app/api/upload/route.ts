@@ -1,6 +1,10 @@
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
+// Allow large file uploads (default is 4.5MB, this allows up to 50MB+)
+export const runtime = 'nodejs';
+export const maxDuration = 60;
+
 export async function POST(request: Request): Promise<NextResponse> {
     const { searchParams } = new URL(request.url);
     const originalFilename = searchParams.get("filename");
