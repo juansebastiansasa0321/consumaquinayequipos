@@ -36,8 +36,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                     price = ${price},
                     hours = ${hours},
                     location = ${location},
-                    tags = ${JSON.stringify(tags || [])}::jsonb,
-                    images = ${JSON.stringify(images || [])}::jsonb
+                    tags = ${tags as any},
+                    images = ${images as any}
                 WHERE id = ${id}
             `;
         } else if ('is_featured' in body) {
