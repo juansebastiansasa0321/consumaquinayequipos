@@ -214,7 +214,19 @@ export default function AdminDashboard() {
                                     <input type="file" accept="image/*" onChange={handleFileUpload} disabled={loading} className="hidden" />
                                 </label>
                             </div>
-                            <p className="text-xs text-gray-500">Nota: Al subir la foto se guarda en Vercel Blob automáticamente.</p>
+                            <p className="text-xs text-gray-500 mb-3">Nota: Al subir la foto se guarda en Vercel Blob automáticamente.</p>
+                            {/* Photo Format Guide */}
+                            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm">
+                                <p className="font-bold text-amber-800 mb-2">📸 Recomendaciones para mejores fotos</p>
+                                <ul className="space-y-1 text-amber-700 text-xs">
+                                    <li><span className="font-semibold">🖼️ Dimensiones ideales:</span> 1200 × 800 px (proporción 3:2) — perfecta para el catálogo y el hero</li>
+                                    <li><span className="font-semibold">📐 Orientación:</span> Horizontal (paisaje), nunca vertical</li>
+                                    <li><span className="font-semibold">⚖️ Tamaño máximo:</span> Menos de 5 MB para subir rápido</li>
+                                    <li><span className="font-semibold">✅ Formato:</span> JPG o WebP (mejor calidad y velocidad)</li>
+                                    <li><span className="font-semibold">💡 Tip:</span> La primera foto que subas será la que aparezca en el catálogo y en el hero del sitio</li>
+                                    <li><span className="font-semibold">🔧 Comprimir fotos gratis:</span> <a href="https://squoosh.app" target="_blank" rel="noreferrer" className="underline hover:text-amber-900">squoosh.app</a></li>
+                                </ul>
+                            </div>
                         </section>
 
                         {/* Details Section */}
