@@ -26,15 +26,27 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         const body = await req.json();
 
         // Check which fields are being updated
-        if ('is_featured' in body) {
+        if (body.title) {
+            // Full update
+            const { title, description, price, hours, location, tags, images } = body;
+            await sql`
+                UPDATE machines
+                SET title = ${title},
+                    description = ${description},
+                    price = ${price},
+                    hours = ${hours},
+                    location = ${location},
+                    tags = ${JSON.stringify(tags || [])}::jsonb,
+                    images = ${JSON.stringify(images || [])}::jsonb
+                WHERE id = ${id}
+            `;
+        } else if ('is_featured' in body) {
             // If setting one to true, we might want to set all others to false first if we only want 1 featured machine
             if (body.is_featured === true) {
                 await sql`UPDATE machines SET is_featured = false`;
             }
             await sql`UPDATE machines SET is_featured = ${body.is_featured} WHERE id = ${id}`;
-        }
-
-        if ('display_order' in body) {
+        } else if ('display_order' in body) {
             await sql`UPDATE machines SET display_order = ${body.display_order} WHERE id = ${id}`;
         }
 

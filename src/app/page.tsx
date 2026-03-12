@@ -101,12 +101,12 @@ export default async function Home() {
       </section>
 
       {/* Featured Machine Section */}
-      <section className="py-12 md:py-20 bg-brand-black text-white">
+      <section className="py-16 md:py-24 bg-gray-50 text-brand-black relative z-20 shadow-2xl rounded-t-[3rem] -mt-12">
         {/* Section Label */}
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-3 mb-8 md:mb-12">
             <div className="w-1 h-8 bg-brand-yellow rounded-full" />
-            <span className="text-brand-yellow uppercase tracking-[0.2em] text-sm font-bold">Máquina Destacada</span>
+            <span className="text-brand-black uppercase tracking-[0.2em] text-sm font-bold">Máquina Destacada</span>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 items-center">
@@ -135,17 +135,17 @@ export default async function Home() {
 
             {/* Text Content */}
             <div className="py-2">
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 md:mb-4 leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 md:mb-4 leading-tight text-brand-black">
                 {featuredMachine.title}
               </h2>
               
               {featuredMachine.hours > 0 && (
-                <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
+                <div className="flex items-center gap-2 text-gray-500 font-medium text-sm mb-4">
                   <Gauge className="w-4 h-4" /> {featuredMachine.hours.toLocaleString()} horas de uso
                 </div>
               )}
 
-              <p className="text-gray-300 mb-6 text-sm md:text-base line-clamp-3 leading-relaxed">
+              <p className="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 leading-relaxed">
                 {featuredMachine.description || "El equipo ideal para proyectos de alto rendimiento."}
               </p>
 
@@ -153,9 +153,9 @@ export default async function Home() {
               {featuredMachine.tags && featuredMachine.tags.length > 0 && (
                 <div className="grid grid-cols-2 gap-2 mb-8">
                   {featuredMachine.tags.slice(0, 4).map((tag, i) => (
-                    <div key={i} className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-2 rounded-lg">
+                    <div key={i} className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-lg shadow-sm">
                       <CheckCircle2 className="w-4 h-4 text-brand-yellow shrink-0" />
-                      <span className="text-gray-200 text-sm font-medium">{tag}</span>
+                      <span className="text-gray-700 text-sm font-bold">{tag}</span>
                     </div>
                   ))}
                 </div>
@@ -173,7 +173,7 @@ export default async function Home() {
                 </a>
                 <Link 
                   href={`/maquina/${featuredMachine.id}`} 
-                  className="flex-1 flex items-center justify-center gap-2 border border-white/20 text-white font-semibold py-3 px-6 rounded-xl hover:bg-white hover:text-brand-black transition-all text-sm md:text-base"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white border border-gray-300 text-brand-black hover:bg-gray-50 font-bold py-3 px-6 rounded-xl transition-all text-sm md:text-base shadow-sm"
                 >
                   Ver detalles
                 </Link>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Upload, Plus, X, Loader2, Save, Trash2, Star, ArrowUp, ArrowDown } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Upload, Plus, X, Loader2, Save, Trash2, Star, ArrowUp, ArrowDown, Pencil } from "lucide-react";
 
 type Machine = {
     id: string;
@@ -22,6 +22,8 @@ export default function AdminDashboard() {
     const [images, setImages] = useState<string[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState("");
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const formRef = useRef<HTMLFormElement>(null);
 
     const [machines, setMachines] = useState<Machine[]>([]);
     const [isFetching, setIsFetching] = useState(true);
@@ -81,6 +83,33 @@ export default function AdminDashboard() {
         setImages(images.filter(img => img !== imgToRemove));
     };
 
+    const handleEdit = (machine: Machine) => {
+        setEditingId(machine.id);
+        setImages(machine.images || []);
+        setTags(machine.tags || []);
+        setSuccess(false);
+        // populate text inputs via form ref
+        setTimeout(() => {
+            if (!formRef.current) return;
+            const f = formRef.current;
+            (f.querySelector('[name="title"]') as HTMLInputElement).value = machine.title || '';
+            (f.querySelector('[name="description"]') as HTMLTextAreaElement).value = (machine as any).description || '';
+            (f.querySelector('[name="price"]') as HTMLInputElement).value = machine.price ? String(machine.price) : '';
+            (f.querySelector('[name="hours"]') as HTMLInputElement).value = machine.hours ? String(machine.hours) : '';
+            (f.querySelector('[name="location"]') as HTMLInputElement).value = machine.location || '';
+        }, 50);
+        // Scroll to form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setImages([]);
+        setTags([]);
+        setSuccess(false);
+        formRef.current?.reset();
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -98,8 +127,10 @@ export default function AdminDashboard() {
         };
 
         try {
-            const res = await fetch("/api/machines", {
-                method: "POST",
+            const url = editingId ? `/api/machines/${editingId}` : "/api/machines";
+            const method = editingId ? 'PUT' : 'POST';
+            const res = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
@@ -109,7 +140,8 @@ export default function AdminDashboard() {
                 (e.target as HTMLFormElement).reset();
                 setTags([]);
                 setImages([]);
-                fetchMachines(); // Refresh list
+                setEditingId(null);
+                fetchMachines();
             } else {
                 const err = await res.json();
                 alert(err.error || "Error al guardar en BD");
@@ -183,9 +215,16 @@ export default function AdminDashboard() {
                 
                 {/* Section 1: Create */}
                 <div>
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-brand-black">Panel de Administración</h1>
-                        <p className="text-gray-500">Agrega nuevas maquinarias al catálogo público.</p>
+                    <div className="mb-6 flex items-center justify-between">
+                        <div>
+                            <h1 className="text-3xl font-bold text-brand-black">{editingId ? 'Editar Máquina' : 'Panel de Administración'}</h1>
+                            <p className="text-gray-500">{editingId ? 'Modifica la información de esta máquina y guarda los cambios.' : 'Agrega nuevas maquinarias al catálogo público.'}</p>
+                        </div>
+                        {editingId && (
+                            <button type="button" onClick={handleCancelEdit} className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-600 border border-gray-200 hover:border-red-300 px-4 py-2 rounded-xl transition-colors bg-white shadow-sm">
+                                <X className="w-4 h-4" /> Cancelar
+                            </button>
+                        )}
                     </div>
 
                     {success && (
@@ -195,7 +234,7 @@ export default function AdminDashboard() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-8">
+                    <form ref={formRef} onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-8">
                         {/* Images Section */}
                         <section>
                             <h2 className="text-xl font-bold border-b pb-2 mb-4 text-brand-black">Fotos de la Máquina</h2>
@@ -322,7 +361,14 @@ export default function AdminDashboard() {
                                             {machine.title}
                                             {machine.is_featured && <span className="text-[10px] bg-brand-yellow px-2 py-0.5 rounded-full uppercase tracking-wider text-brand-black">Destacada</span>}
                                         </h3>
-                                        <p className="text-sm text-gray-500 truncate">{machine.location} • ${machine.price?.toLocaleString()}</p>
+                                        <p className="text-sm text-gray-500 truncate mb-1">{machine.location} • ${machine.price?.toLocaleString()}</p>
+                                        <div className="flex flex-wrap gap-1">
+                                            {machine.tags?.map(tag => (
+                                                <span key={tag} className="text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <div className="flex flex-col gap-1 border-r pr-2 mr-2">
@@ -349,6 +395,13 @@ export default function AdminDashboard() {
                                             title="Marcar como Destacada"
                                         >
                                             <Star className={`w-5 h-5 ${machine.is_featured ? 'fill-brand-black' : ''}`} />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleEdit(machine)}
+                                            className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                            title="Editar máquina"
+                                        >
+                                            <Pencil className="w-5 h-5" />
                                         </button>
                                         <button 
                                             onClick={() => handleDelete(machine.id)}
