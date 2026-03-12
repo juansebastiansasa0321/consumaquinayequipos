@@ -36,8 +36,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                     price = ${price},
                     hours = ${hours},
                     location = ${location},
-                    tags = ${tags as any},
-                    images = ${images as any}
+                    tags = ${tags ? tags.map(String) : []}::TEXT[],
+                    images = ${images ? images.map(String) : []}::TEXT[]
                 WHERE id = ${id}
             `;
         } else if ('is_featured' in body) {

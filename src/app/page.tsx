@@ -101,7 +101,7 @@ export default async function Home() {
       </section>
 
       {/* Featured Machine Section */}
-      <section className="py-16 md:py-24 bg-gray-50 text-brand-black relative z-20 shadow-2xl rounded-t-[3rem] -mt-12">
+      <section className="py-16 md:py-24 bg-gray-50 text-brand-black relative z-20 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] rounded-[3rem] -mt-12 mb-16 mx-4 md:mx-8 xl:mx-16 border border-gray-200">
         {/* Section Label */}
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-3 mb-8 md:mb-12">
@@ -184,7 +184,7 @@ export default async function Home() {
       </section>
 
       {/* Dynamic Catalog Section */}
-      <section id="catalogo" className="py-16 md:py-24 bg-white text-brand-black">
+      <section id="catalogo" className="py-8 md:py-16 bg-white text-brand-black">
         {/* Top border accent */}
         <div className="w-full h-1 bg-gradient-to-r from-brand-yellow via-yellow-400 to-transparent mb-12 md:mb-16" />
         <div className="container mx-auto px-4">
