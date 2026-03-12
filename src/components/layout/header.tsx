@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Hammer, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 export default function Header() {
@@ -10,9 +10,17 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-brand-gray/20 bg-brand-black/95 backdrop-blur supports-[backdrop-filter]:bg-brand-black/60">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                <Link href="/" className="flex items-center space-x-2">
-                    <Hammer className="h-6 w-6 text-brand-yellow" />
-                    <span className="font-bold text-xl text-white">Consumaquinayequipos</span>
+                <Link href="/" className="flex items-center space-x-3 group">
+                    {/* Logomark */}
+                    <div className="relative flex items-center justify-center w-9 h-9 bg-brand-yellow rounded-xl overflow-hidden shrink-0 shadow-lg shadow-brand-yellow/20 group-hover:scale-105 transition-transform">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand-yellow to-yellow-500" />
+                        <span className="relative z-10 font-black text-brand-black text-2xl leading-none italic pr-0.5 mt-0.5">C</span>
+                    </div>
+                    {/* Logotype */}
+                    <div className="flex flex-col">
+                        <span className="font-black text-xl text-white leading-none tracking-tight">Consu<span className="text-brand-yellow">maquina</span></span>
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] leading-none mt-1">y Equipos</span>
+                    </div>
                 </Link>
 
                 {/* Desktop Nav */}
