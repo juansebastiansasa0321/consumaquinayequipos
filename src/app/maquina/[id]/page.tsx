@@ -164,11 +164,11 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 sm:pb-0 sm:overflow-visible sm:snap-none -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar after:content-[''] after:shrink-0 after:w-1 sm:after:hidden">
                             {similar.map(m => (
                                 <Link href={`/maquina/${m.id}`} key={m.id}
-                                    className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-brand-yellow/40 transition-all duration-300">
-                                    <div className="relative h-40 bg-gray-100 overflow-hidden">
+                                    className="group flex flex-col w-[85vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none sm:shrink sm:snap-align-none bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-brand-yellow/40 transition-all duration-300">
+                                    <div className="relative h-40 bg-gray-100 overflow-hidden w-full">
                                         {m.images?.[0] ? (
                                             <Image src={m.images[0]} alt={m.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                                         ) : (
@@ -193,7 +193,7 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                                             ))}
                                         </div>
                                     </div>
-                                    <div className="px-4 pb-4">
+                                    <div className="mt-auto pt-4 px-4 pb-4">
                                         <span className="text-xs font-bold text-brand-yellow flex items-center gap-1">Ver equipo <ArrowRight className="w-3 h-3" /></span>
                                     </div>
                                 </Link>
