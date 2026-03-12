@@ -16,6 +16,7 @@ type Machine = {
   tags: string[];
   images: string[];
   is_featured: boolean;
+  usage_type?: string;
 };
 
 // Data Fetching with graceful degradation
@@ -141,7 +142,7 @@ export default async function Home() {
               
               {featuredMachine.hours > 0 && (
                 <div className="flex items-center gap-2 text-gray-500 font-medium text-sm mb-4">
-                  <Gauge className="w-4 h-4" /> {featuredMachine.hours.toLocaleString()} horas de uso
+                  <Gauge className="w-4 h-4" /> {featuredMachine.hours.toLocaleString()} {featuredMachine.usage_type === 'km' ? 'kilómetros' : 'horas de uso'}
                 </div>
               )}
 

@@ -28,13 +28,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         // Check which fields are being updated
         if (body.title) {
             // Full update
-            const { title, description, price, hours, location, tags, images } = body;
+            const { title, description, price, hours, location, tags, images, usage_type } = body;
             await sql`
                 UPDATE machines
                 SET title = ${title},
                     description = ${description},
                     price = ${price},
                     hours = ${hours},
+                    usage_type = ${usage_type || 'hours'},
                     location = ${location},
                     tags = ${tags ? tags.map(String) : []}::TEXT[],
                     images = ${images ? images.map(String) : []}::TEXT[]

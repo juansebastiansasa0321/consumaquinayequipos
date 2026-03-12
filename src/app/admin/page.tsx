@@ -23,7 +23,14 @@ export default function AdminDashboard() {
     const [tags, setTags] = useState<string[]>([]);
     const [tagInput, setTagInput] = useState("");
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [priceInput, setPriceInput] = useState("");
+    const [usageType, setUsageType] = useState<"hours" | "km">("hours");
     const formRef = useRef<HTMLFormElement>(null);
+
+    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = e.target.value.replace(/\D/g, "");
+        setPriceInput(raw ? Number(raw).toLocaleString("es-CO") : "");
+    };
 
     const [machines, setMachines] = useState<Machine[]>([]);
     const [isFetching, setIsFetching] = useState(true);
@@ -94,10 +101,11 @@ export default function AdminDashboard() {
             const f = formRef.current;
             (f.querySelector('[name="title"]') as HTMLInputElement).value = machine.title || '';
             (f.querySelector('[name="description"]') as HTMLTextAreaElement).value = (machine as any).description || '';
-            (f.querySelector('[name="price"]') as HTMLInputElement).value = machine.price ? String(machine.price) : '';
             (f.querySelector('[name="hours"]') as HTMLInputElement).value = machine.hours ? String(machine.hours) : '';
             (f.querySelector('[name="location"]') as HTMLInputElement).value = machine.location || '';
         }, 50);
+        setPriceInput(machine.price ? machine.price.toLocaleString("es-CO") : "");
+        setUsageType((machine as any).usage_type === 'km' ? 'km' : 'hours');
         // Scroll to form
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -106,6 +114,8 @@ export default function AdminDashboard() {
         setEditingId(null);
         setImages([]);
         setTags([]);
+        setPriceInput("");
+        setUsageType("hours");
         setSuccess(false);
         formRef.current?.reset();
     };
@@ -119,8 +129,9 @@ export default function AdminDashboard() {
         const data = {
             title: formData.get("title"),
             description: formData.get("description"),
-            price: formData.get("price") || 0,
+            price: Number(priceInput.replace(/\D/g, "")) || 0,
             hours: formData.get("hours") || 0,
+            usage_type: usageType,
             location: formData.get("location"),
             tags,
             images
@@ -140,6 +151,8 @@ export default function AdminDashboard() {
                 (e.target as HTMLFormElement).reset();
                 setTags([]);
                 setImages([]);
+                setPriceInput("");
+                setUsageType("hours");
                 setEditingId(null);
                 fetchMachines();
             } else {
@@ -282,12 +295,16 @@ export default function AdminDashboard() {
 
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-2">Precio (COP)</label>
-                                <input type="number" name="price" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Ej: 350000000" />
+                                <input type="text" value={priceInput} onChange={handlePriceChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Ej: 350.000.000" />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-semibold text-gray-900 mb-2">Horas de Uso</label>
-                                <input type="number" name="hours" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Ej: 1200" />
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Uso (Horas / Km)</label>
+                                <div className="flex gap-2 mb-2">
+                                    <button type="button" onClick={() => setUsageType('hours')} className={`flex-1 py-1 rounded border text-sm font-semibold transition-colors ${usageType === 'hours' ? 'bg-brand-black text-white border-brand-black' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200'}`}>Horas</button>
+                                    <button type="button" onClick={() => setUsageType('km')} className={`flex-1 py-1 rounded border text-sm font-semibold transition-colors ${usageType === 'km' ? 'bg-brand-black text-white border-brand-black' : 'bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200'}`}>Kilómetros</button>
+                                </div>
+                                <input type="number" name="hours" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder={`Ej: ${usageType === 'hours' ? '1200' : '45000'}`} />
                             </div>
 
                             <div className="col-span-2">

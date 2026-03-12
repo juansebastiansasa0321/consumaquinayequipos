@@ -15,6 +15,7 @@ type Machine = {
     tags: string[];
     images: string[];
     is_featured: boolean;
+    usage_type?: string;
 };
 
 export function CatalogSearch({ machines }: { machines: Machine[] }) {
@@ -105,7 +106,7 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                         <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {machine.location}</span>
                                     )}
                                     {machine.hours > 0 && (
-                                        <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {machine.hours.toLocaleString()}h</span>
+                                        <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {machine.hours.toLocaleString()}{machine.usage_type === 'km' ? ' km' : 'h'}</span>
                                     )}
                                 </div>
                                 <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">

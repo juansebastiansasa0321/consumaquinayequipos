@@ -16,6 +16,7 @@ type Machine = {
     tags: string[];
     images: string[];
     is_featured: boolean;
+    usage_type?: string;
 };
 
 async function getMachine(id: string): Promise<Machine | null> {
@@ -38,7 +39,7 @@ async function getSimilarMachines(currentId: string, tags: string[]): Promise<Ma
         const rows = await sql`
             SELECT * FROM machines
             WHERE id != ${numericId}
-            AND tags && ${tags}::text[]
+            AND tags && ${tags.length ? tags.map(String) : []}::text[]
             ORDER BY display_order ASC, created_at DESC
             LIMIT 4
         `;
@@ -104,7 +105,7 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                             )}
                             {machine.hours > 0 && (
                                 <span className="flex items-center gap-1.5">
-                                    <Clock className="w-4 h-4 text-brand-yellow" /> {machine.hours.toLocaleString()} horas de uso
+                                    <Clock className="w-4 h-4 text-brand-yellow" /> {machine.hours.toLocaleString()} {machine.usage_type === 'km' ? 'km' : 'horas de uso'}
                                 </span>
                             )}
                         </div>

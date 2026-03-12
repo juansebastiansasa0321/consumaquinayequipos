@@ -14,14 +14,14 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { title, description, price, hours, location, tags, images } = body;
+        const { title, description, price, hours, location, tags, images, usage_type } = body;
 
         // We store arrays directly as Postgres text arrays in the SQL string thanks to `@vercel/postgres` or as JSON
         // @vercel/postgres actually requires careful syntax for arrays, but jsonb/string[] both can work.
         // For simplicity, assuming tags and images are arrays of strings. Let's serialize arrays to postgres array syntax manually or use JSON.
         // Given schema is TEXT[], we can pass an array in the tagged template logic.
         await sql`
-      INSERT INTO machines (title, description, price, hours, location, tags, images, display_order, is_featured)
+      INSERT INTO machines (title, description, price, hours, location, tags, images, display_order, is_featured, usage_type)
       VALUES (
         ${title},
         ${description},
@@ -31,7 +31,8 @@ export async function POST(req: Request) {
         ${tags as any}, 
         ${images as any},
         0,
-        false
+        false,
+        ${usage_type || 'hours'}
       )
     `;
 
