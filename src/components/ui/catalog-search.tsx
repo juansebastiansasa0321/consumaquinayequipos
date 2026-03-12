@@ -88,7 +88,7 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                 )}
                                 {machine.price && (
                                     <div className="absolute top-3 right-3 bg-brand-black/75 backdrop-blur text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                                        ${machine.price.toLocaleString("es-CO")}
+                                        ${Number(machine.price).toLocaleString("es-CO")}
                                     </div>
                                 )}
                                 {machine.tags?.length > 0 && !machine.is_featured && (
@@ -111,7 +111,7 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                 </div>
                                 <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                                     <span className="font-black text-lg text-brand-black">
-                                        {machine.price ? `$${machine.price.toLocaleString("es-CO")}` : "Consultar precio"}
+                                        {machine.price ? `$${Number(machine.price).toLocaleString("es-CO")}` : "Consultar precio"}
                                     </span>
                                     <span className="text-xs font-bold text-brand-yellow group-hover:underline">Ver detalles →</span>
                                 </div>

@@ -378,7 +378,7 @@ export default function AdminDashboard() {
                                             {machine.title}
                                             {machine.is_featured && <span className="text-[10px] bg-brand-yellow px-2 py-0.5 rounded-full uppercase tracking-wider text-brand-black">Destacada</span>}
                                         </h3>
-                                        <p className="text-sm text-gray-500 truncate mb-1">{machine.location} • ${machine.price?.toLocaleString()}</p>
+                                        <p className="text-sm text-gray-500 truncate mb-1">{machine.location} • ${machine.price ? Number(machine.price).toLocaleString("es-CO") : 0}</p>
                                         <div className="flex flex-wrap gap-1">
                                             {machine.tags?.map(tag => (
                                                 <span key={tag} className="text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">

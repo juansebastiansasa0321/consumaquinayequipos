@@ -114,7 +114,7 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                     {/* Price */}
                     <div className="px-6 py-3">
                         <span className="text-2xl md:text-3xl font-black text-brand-black">
-                            {machine.price ? `$${machine.price.toLocaleString("es-CO")}` : "Precio a consultar"}
+                            {machine.price ? `$${Number(machine.price).toLocaleString("es-CO")}` : "Precio a consultar"}
                         </span>
                     </div>
 
@@ -176,7 +176,7 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                                         )}
                                         {m.price && (
                                             <div className="absolute bottom-2 right-2 bg-brand-yellow text-brand-black text-[10px] font-black px-2 py-1 rounded-full">
-                                                ${m.price.toLocaleString("es-CO")}
+                                                ${Number(m.price).toLocaleString("es-CO")}
                                             </div>
                                         )}
                                     </div>

@@ -123,7 +123,7 @@ export default async function Home() {
               {/* Price badge */}
               {featuredMachine.price && (
                 <div className="absolute top-4 right-4 bg-brand-yellow text-brand-black font-black text-sm px-3 py-1.5 rounded-full shadow-lg">
-                  ${featuredMachine.price.toLocaleString('es-CO')}
+                  ${Number(featuredMachine.price).toLocaleString('es-CO')}
                 </div>
               )}
               {/* Location badge */}
