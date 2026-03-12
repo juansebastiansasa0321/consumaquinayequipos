@@ -38,60 +38,71 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="bg-gray-50 min-h-screen py-16">
-            <div className="container mx-auto px-4 max-w-6xl">
-                <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-brand-black">Contáctanos</h1>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                        ¿Buscas maquinaria pesada para tu proyecto? Déjanos tus datos y un asesor especializado te contactará enseguida.
+        <div className="bg-gray-50 min-h-screen py-10 md:py-16">
+            <div className="container mx-auto px-4 max-w-5xl">
+                <div className="text-center mb-10 md:mb-14">
+                    <div className="inline-flex items-center gap-2 bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
+                        Maquinaria Pesada
+                    </div>
+                    <h1 className="text-3xl md:text-5xl font-black mb-3 text-brand-black">Contáctanos</h1>
+                    <p className="text-gray-600 max-w-xl mx-auto text-sm md:text-base">
+                        ¿Buscas maquinaria para tu proyecto? Déjanos tus datos y un asesor te contactará enseguida.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-0 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
 
                     {/* Left Side: Contact Info */}
-                    <div className="bg-brand-black text-white p-12 flex flex-col justify-center">
-                        <h2 className="text-3xl font-bold mb-8 text-brand-yellow">Información de Contacto</h2>
+                    <div className="bg-brand-black text-white p-7 md:p-12 flex flex-col justify-between">
+                        <div>
+                            <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-brand-yellow">Información de Contacto</h2>
 
-                        <div className="space-y-8 flex-1">
-                            <div className="flex items-start gap-4">
-                                <MapPin className="text-brand-yellow w-8 h-8 shrink-0" />
-                                <div>
-                                    <h3 className="font-bold text-lg">Áreas de Cobertura</h3>
-                                    <p className="text-gray-400">Atendemos especialmente a las regiones de Chocó, Cauca y Valle del Cauca, Colombia.</p>
+                            <div className="space-y-6 md:space-y-8">
+                                <div className="flex items-start gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                        <MapPin className="text-brand-yellow w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-sm md:text-base">Areas de Cobertura</h3>
+                                        <p className="text-gray-400 text-xs md:text-sm mt-1">Chocó, Cauca y Valle del Cauca, Colombia.</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="flex items-start gap-4">
-                                <Phone className="text-brand-yellow w-8 h-8 shrink-0" />
-                                <div>
-                                    <h3 className="font-bold text-lg">Teléfono / WhatsApp</h3>
-                                    <p className="text-gray-400">+57 305 426 5677</p>
+                                <div className="flex items-start gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                        <Phone className="text-brand-yellow w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-sm md:text-base">Teléfono / WhatsApp</h3>
+                                        <a href="https://wa.me/573054265677" className="text-gray-400 text-xs md:text-sm mt-1 hover:text-brand-yellow transition-colors block">+57 305 426 5677</a>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="flex items-start gap-4">
-                                <Mail className="text-brand-yellow w-8 h-8 shrink-0" />
-                                <div>
-                                    <h3 className="font-bold text-lg">Correo Electrónico</h3>
-                                    <p className="text-gray-400">consumaquinayequipos@icloud.com</p>
+                                <div className="flex items-start gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                                        <Mail className="text-brand-yellow w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-sm md:text-base">Correo Electrónico</h3>
+                                        <p className="text-gray-400 text-xs mt-1 break-all">consumaquinayequipos@icloud.com</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-12 flex items-center gap-6">
-                            <a href="https://instagram.com/consumaquinayequipos" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-yellow hover:text-brand-black transition-colors">
-                                <Instagram className="w-6 h-6" />
+                        <div className="mt-8 pt-6 border-t border-white/10 flex items-center gap-4">
+                            <a href="https://instagram.com/consumaquinayequipos" className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-brand-yellow hover:text-brand-black transition-colors">
+                                <Instagram className="w-5 h-5" />
                             </a>
-                            <a href="https://facebook.com/consumaquinayequipos" className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-yellow hover:text-brand-black transition-colors">
-                                <Facebook className="w-6 h-6" />
+                            <a href="https://facebook.com/consumaquinayequipos" className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-brand-yellow hover:text-brand-black transition-colors">
+                                <Facebook className="w-5 h-5" />
                             </a>
                         </div>
                     </div>
 
                     {/* Right Side: Contact Form */}
-                    <div className="p-12">
-                        <h2 className="text-2xl font-bold mb-6 text-brand-black">Solicitar Cotización</h2>
+                    <div className="p-7 md:p-10">
+                        <h2 className="text-xl md:text-2xl font-bold mb-5 text-brand-black">Solicitar Cotización</h2>
 
                         {success ? (
                             <div className="bg-green-50 text-green-800 p-8 rounded-2xl border border-green-200 text-center shadow-sm">
@@ -120,7 +131,7 @@ export default function ContactPage() {
                                     <input required name="name" type="text" className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-brand-black focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/20 outline-none transition-all" placeholder="Ej. Juan Pérez" />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-semibold text-gray-700 mb-2">Teléfono *</label>
                                         <input required name="phone" type="tel" minLength={10} maxLength={15} pattern="[0-9\s\-\+\(\)]+" title="Ingresa un número de teléfono válido (ej. 300 123 4567)" className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-brand-black focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/20 outline-none transition-all" placeholder="Ej. 300 123 4567" />
