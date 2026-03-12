@@ -146,21 +146,9 @@ export default async function Home() {
                 </div>
               )}
 
-              <p className="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 leading-relaxed">
+              <p className="text-gray-600 mb-8 text-sm md:text-base line-clamp-3 leading-relaxed">
                 {featuredMachine.description || "El equipo ideal para proyectos de alto rendimiento."}
               </p>
-
-              {/* Tags as feature list */}
-              {featuredMachine.tags && featuredMachine.tags.length > 0 && (
-                <div className="grid grid-cols-2 gap-2 mb-8">
-                  {featuredMachine.tags.slice(0, 4).map((tag, i) => (
-                    <div key={i} className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-lg shadow-sm">
-                      <CheckCircle2 className="w-4 h-4 text-brand-yellow shrink-0" />
-                      <span className="text-gray-700 text-sm font-bold">{tag}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
