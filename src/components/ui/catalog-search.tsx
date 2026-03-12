@@ -91,13 +91,6 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                         ${Number(machine.price).toLocaleString("es-CO")}
                                     </div>
                                 )}
-                                {machine.tags?.length > 0 && !machine.is_featured && (
-                                    <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
-                                        {machine.tags.slice(0, 1).map(tag => (
-                                            <span key={tag} className="bg-brand-black/75 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full">{tag}</span>
-                                        ))}
-                                    </div>
-                                )}
                             </div>
                             <div className="p-5 flex-1 flex flex-col">
                                 <h3 className="text-base font-bold mb-2 group-hover:text-brand-yellow transition-colors line-clamp-2">{machine.title}</h3>

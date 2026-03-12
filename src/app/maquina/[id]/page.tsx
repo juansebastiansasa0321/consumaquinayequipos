@@ -187,11 +187,6 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                                                 <MapPin className="w-3 h-3" /> {m.location}
                                             </p>
                                         )}
-                                        <div className="flex flex-wrap gap-1 mt-2">
-                                            {m.tags?.slice(0, 2).map(tag => (
-                                                <span key={tag} className="bg-gray-100 text-gray-600 text-[10px] px-2 py-0.5 rounded-full font-medium">{tag}</span>
-                                            ))}
-                                        </div>
                                     </div>
                                     <div className="mt-auto pt-4 px-4 pb-4">
                                         <span className="text-xs font-bold text-brand-yellow flex items-center gap-1">Ver equipo <ArrowRight className="w-3 h-3" /></span>
