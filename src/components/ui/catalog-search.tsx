@@ -61,14 +61,14 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                 )}
             </div>
 
-            {/* Results Grid */}
+            {/* Results Grid / Mobile Carousel */}
             {filtered.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 pt-2 sm:pt-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 md:gap-8 sm:pb-0 sm:overflow-visible sm:snap-none -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar after:content-[''] after:shrink-0 after:w-1 sm:after:hidden">
                     {filtered.map((machine) => (
                         <Link
                             href={`/maquina/${machine.id}`}
                             key={machine.id}
-                            className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-brand-yellow/40 hover:-translate-y-1"
+                            className="group flex flex-col w-[85vw] max-w-[320px] shrink-0 snap-center sm:w-auto sm:max-w-none sm:shrink sm:snap-align-none bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-brand-yellow/40 hover:-translate-y-1"
                         >
                             <div className="relative h-52 sm:h-60 w-full bg-gray-100 overflow-hidden">
                                 {machine.images && machine.images.length > 0 ? (
