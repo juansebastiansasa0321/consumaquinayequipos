@@ -72,10 +72,17 @@ export default function NewMachinePage() {
         setError("");
 
         // Basic front-end validation
-        if (price && parseFloat(price) < 3000000) {
-            setError("El precio no puede ser menor a $3.000.000 COP para mantener la calidad del catálogo.");
-            setIsSubmitting(false);
-            return;
+        if (price) {
+            const numPrice = parseFloat(price);
+            if (currency === 'COP' && numPrice < 3000000) {
+                setError("El precio no puede ser menor a $3.000.000 COP para mantener la calidad del catálogo.");
+                setIsSubmitting(false);
+                return;
+            } else if (currency === 'USD' && numPrice < 1000) {
+                setError("El precio no puede ser menor a $1.000 USD para mantener la calidad del catálogo.");
+                setIsSubmitting(false);
+                return;
+            }
         }
 
         const phoneRegex = /^[0-9+]+$/;
