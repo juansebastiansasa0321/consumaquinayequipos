@@ -1,10 +1,12 @@
 export const dynamic = 'force-dynamic';
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Clock, MapPin, CheckCircle2, Tag, ArrowRight, MessageCircle } from "lucide-react";
+import { Metadata } from "next";
+import { ArrowLeft, Clock, MapPin, CheckCircle2, Tag, ArrowRight, MessageCircle, Phone, Mail } from "lucide-react";
 import { sql } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { MachineGallery } from "@/components/ui/machine-gallery";
+import { ContactSellerButton } from "@/components/ui/contact-seller-button";
 
 type Machine = {
     id: string;
@@ -17,6 +19,9 @@ type Machine = {
     images: string[];
     is_featured: boolean;
     usage_type?: string;
+    contact_phone?: string;
+    contact_phone_2?: string;
+    contact_email?: string;
 };
 
 async function getMachine(id: string): Promise<Machine | null> {
@@ -50,6 +55,56 @@ async function getSimilarMachines(currentId: string, tags: string[]): Promise<Ma
     }
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params;
+    const numericId = parseInt(id, 10);
+    
+    if (isNaN(numericId)) {
+        return {
+            title: "Máquina no encontrada | ConsuMáquina",
+            description: "La máquina que buscas no existe o ha sido eliminada."
+        }
+    }
+
+    try {
+        const rows = await sql`SELECT title, seo_title, seo_description, location, images FROM machines WHERE id = ${numericId}`;
+        const machine = rows[0];
+
+        if (!machine) {
+             return {
+                title: "Máquina no encontrada | ConsuMáquina",
+                description: "La máquina que buscas no existe o ha sido eliminada."
+            }
+        }
+
+        const title = machine.seo_title || `${machine.title} - ${machine.location || ''} | ConsuMáquina`;
+        const description = machine.seo_description || `Mira esta excelente oportunidad: ${machine.title} ubicada en ${machine.location || 'Colombia'}.`;
+        const image = machine.images && machine.images.length > 0 ? machine.images[0] : '/og-default.jpg';
+
+        return {
+            title,
+            description,
+            openGraph: {
+                title,
+                description,
+                images: [image],
+                type: 'website'
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title,
+                description,
+                images: [image]
+            }
+        }
+    } catch(e) {
+        return {
+            title: "Catálogo de Maquinaria | ConsuMáquina",
+            description: "Encuentra la mejor maquinaria pesada del país."
+        }
+    }
+}
+
 export default async function MachineDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const machine = await getMachine(id);
@@ -62,7 +117,12 @@ export default async function MachineDetailPage({ params }: { params: Promise<{ 
 }
 
 function MachineDetailView({ machine, similar }: { machine: Machine; similar: Machine[] }) {
+    const contactNumberRaw = machine.contact_phone || "573054265677";
+    const contactPhoneNumber = contactNumberRaw.replace(/\D/g, '');
     const message = encodeURIComponent(`Hola, estoy interesado en la máquina: ${machine.title}. ¿Podría darme más información?`);
+
+    const contactNumber2Raw = machine.contact_phone_2 || "";
+    const contactPhoneNumber2 = contactNumber2Raw.replace(/\D/g, '');
 
     return (
         <div className="bg-gray-50 min-h-screen pb-24">
@@ -112,27 +172,51 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                     </div>
 
                     {/* Price */}
-                    <div className="px-6 py-3">
+                    <div className="px-6 py-3 border-t border-gray-100 mt-2">
                         <span className="text-2xl md:text-3xl font-black text-brand-black">
                             {machine.price ? `$${Number(machine.price).toLocaleString("es-CO")}` : "Precio a consultar"}
                         </span>
                     </div>
 
                     {/* CTA Buttons */}
-                    <div className="px-6 py-5 flex flex-col sm:flex-row gap-3 border-t border-gray-100">
-                        <a
-                            href={`https://wa.me/573054265677?text=${message}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex-1 flex items-center justify-center gap-2 bg-brand-yellow hover:bg-yellow-400 text-brand-black font-bold py-4 rounded-xl transition-all shadow-md shadow-brand-yellow/20"
-                        >
-                            <MessageCircle className="w-5 h-5" /> Contactar al Vendedor
-                        </a>
+                    <div className="px-6 py-5 flex flex-col gap-3 border-t border-gray-100">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <ContactSellerButton
+                                phone={contactPhoneNumber}
+                                message={message}
+                                machineId={machine.id}
+                            />
+                        </div>
+                        
+                        {(contactPhoneNumber2 || machine.contact_email) && (
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                {contactPhoneNumber2 && (
+                                     <a
+                                        href={`https://wa.me/${contactPhoneNumber2}?text=${message}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex-1 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-brand-black font-bold py-3 text-sm rounded-xl transition-all"
+                                    >
+                                        <MessageCircle className="w-4 h-4" /> Opción 2
+                                    </a>
+                                )}
+                                {machine.contact_email && (
+                                     <a
+                                        href={`mailto:${machine.contact_email}?subject=Interés en ${machine.title}&body=Hola, estoy interesado en recibir más información sobre esta máquina.`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex-1 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-brand-black font-bold py-3 text-sm rounded-xl transition-all"
+                                    >
+                                        <Mail className="w-4 h-4" /> Enviar Correo
+                                    </a>
+                                )}
+                            </div>
+                        )}
                         <Link
                             href="/contacto"
-                            className="flex-1 flex items-center justify-center gap-2 border-2 border-brand-black text-brand-black font-bold py-4 rounded-xl hover:bg-brand-black hover:text-white transition-all"
+                            className="flex-1 flex items-center justify-center gap-2 border-2 border-brand-black text-brand-black font-bold py-3 rounded-xl hover:bg-brand-black hover:text-white transition-all mt-2"
                         >
-                            Solicitar Cotización
+                            Solicitar Asesoría por ConsuMáquina
                         </Link>
                     </div>
                     <p className="text-xs text-center text-gray-400 pb-4 flex items-center justify-center gap-1">

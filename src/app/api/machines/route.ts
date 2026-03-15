@@ -1,9 +1,46 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
-        const rows = await sql`SELECT * FROM machines ORDER BY display_order ASC, created_at DESC`;
+        const url = new URL(req.url);
+        const locationFilter = url.searchParams.get("location");
+
+        let rows;
+        if (locationFilter) {
+            rows = await sql`
+                SELECT m.*, u.name as seller_name 
+                FROM machines m
+                LEFT JOIN users u ON m.user_id = u.id
+                WHERE m.status = 'published' 
+                  AND (m.expires_at > CURRENT_TIMESTAMP OR m.expires_at IS NULL)
+                  AND m.location ILIKE ${`%${locationFilter}%`}
+                ORDER BY 
+                    CASE m.visibility_tier
+                        WHEN 'oro' THEN 1
+                        WHEN 'plata' THEN 2
+                        WHEN 'basico' THEN 3
+                        ELSE 4
+                    END ASC,
+                    m.created_at DESC
+            `;
+        } else {
+            rows = await sql`
+                SELECT m.*, u.name as seller_name 
+                FROM machines m
+                LEFT JOIN users u ON m.user_id = u.id
+                WHERE m.status = 'published' 
+                  AND (m.expires_at > CURRENT_TIMESTAMP OR m.expires_at IS NULL)
+                ORDER BY 
+                    CASE m.visibility_tier
+                        WHEN 'oro' THEN 1
+                        WHEN 'plata' THEN 2
+                        WHEN 'basico' THEN 3
+                        ELSE 4
+                    END ASC,
+                    m.created_at DESC
+            `;
+        }
         return NextResponse.json({ machines: rows });
     } catch (error) {
         console.error("DB GET Error:", error);

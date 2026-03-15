@@ -28,7 +28,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         // Check which fields are being updated
         if (body.title) {
             // Full update
-            const { title, description, price, hours, location, tags, images, usage_type } = body;
+            const { title, description, price, hours, location, tags, images, usage_type, visibility_tier, contact_phone, contact_phone_2, contact_email, is_urgent } = body;
+            
+            let durationDays = 30; // default for gratis
+            if (visibility_tier === 'plata') {
+                durationDays = 45;
+            } else if (visibility_tier === 'oro') {
+                durationDays = 60;
+            }
             await sql`
                 UPDATE machines
                 SET title = ${title},
@@ -37,8 +44,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                     hours = ${hours},
                     usage_type = ${usage_type || 'hours'},
                     location = ${location},
+                    contact_phone = ${contact_phone || null},
+                    contact_phone_2 = ${contact_phone_2 || null},
+                    contact_email = ${contact_email || null},
+                    visibility_tier = ${visibility_tier || 'gratis'},
+                    expires_at = CURRENT_TIMESTAMP + (${durationDays} * INTERVAL '1 day'),
                     tags = ${tags ? tags.map(String) : []}::TEXT[],
-                    images = ${images ? images.map(String) : []}::TEXT[]
+                    images = ${images ? images.map(String) : []}::TEXT[],
+                    is_urgent = ${is_urgent === true}
                 WHERE id = ${id}
             `;
         } else if ('is_featured' in body) {

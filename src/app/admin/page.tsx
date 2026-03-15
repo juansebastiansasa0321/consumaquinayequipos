@@ -1,18 +1,34 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Upload, Plus, X, Loader2, Save, Trash2, Star, ArrowUp, ArrowDown, Pencil } from "lucide-react";
+import { Upload, Plus, X, Loader2, Save, Trash2, Star, ArrowUp, ArrowDown, Pencil, LayoutDashboard, Users as UsersIcon, List } from "lucide-react";
 
 type Machine = {
     id: string;
     title: string;
+    description?: string;
     price: number;
     hours: number;
+    usage_type?: string;
     location: string;
     tags: string[];
     images: string[];
     is_featured: boolean;
     display_order: number;
+    visibility_tier?: string;
+    status?: string;
+    expires_at?: string;
+    seller_name?: string;
+    seller_email?: string;
+};
+
+type User = {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    created_at: string;
+    machines_count: number;
 };
 
 export default function AdminDashboard() {
@@ -32,13 +48,18 @@ export default function AdminDashboard() {
         setPriceInput(raw ? Number(raw).toLocaleString("es-CO") : "");
     };
 
+    const [visibilityTier, setVisibilityTier] = useState<"free" | "featured" | "premium">("free");
+
     const [machines, setMachines] = useState<Machine[]>([]);
+    const [usersList, setUsersList] = useState<User[]>([]);
     const [isFetching, setIsFetching] = useState(true);
+    const [isFetchingUsers, setIsFetchingUsers] = useState(true);
+    const [activeTab, setActiveTab] = useState<"overview" | "catalog" | "users">("overview");
 
     const fetchMachines = async () => {
         setIsFetching(true);
         try {
-            const res = await fetch("/api/machines");
+            const res = await fetch("/api/admin/machines");
             const data = await res.json();
             if (data.machines) setMachines(data.machines);
         } catch (err) {
@@ -48,14 +69,35 @@ export default function AdminDashboard() {
         }
     };
 
+    const fetchUsers = async () => {
+        setIsFetchingUsers(true);
+        try {
+            const res = await fetch("/api/admin/users");
+            const data = await res.json();
+            if (data.users) setUsersList(data.users);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsFetchingUsers(false);
+        }
+    };
+
     useEffect(() => {
         fetchMachines();
+        fetchUsers();
     }, []);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.length) return;
-        setLoading(true);
+        
         const file = e.target.files[0];
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB limit
+        if (file.size > MAX_SIZE) {
+            alert(`La imagen "${file.name}" supera el límite de 5MB.`);
+            return;
+        }
+
+        setLoading(true);
         try {
             const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
                 method: "POST",
@@ -106,6 +148,7 @@ export default function AdminDashboard() {
         }, 50);
         setPriceInput(machine.price ? machine.price.toLocaleString("es-CO") : "");
         setUsageType((machine as any).usage_type === 'km' ? 'km' : 'hours');
+        setVisibilityTier((machine as any).visibility_tier || 'free');
         // Scroll to form
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -116,6 +159,7 @@ export default function AdminDashboard() {
         setTags([]);
         setPriceInput("");
         setUsageType("hours");
+        setVisibilityTier("free");
         setSuccess(false);
         formRef.current?.reset();
     };
@@ -133,6 +177,7 @@ export default function AdminDashboard() {
             hours: formData.get("hours") || 0,
             usage_type: usageType,
             location: formData.get("location"),
+            visibility_tier: visibilityTier,
             tags,
             images
         };
@@ -153,6 +198,7 @@ export default function AdminDashboard() {
                 setImages([]);
                 setPriceInput("");
                 setUsageType("hours");
+                setVisibilityTier("free");
                 setEditingId(null);
                 fetchMachines();
             } else {
@@ -222,16 +268,164 @@ export default function AdminDashboard() {
     };
 
 
+    const handleDeleteUser = async (id: string) => {
+        if (!confirm("⚠️ ADVERTENCIA: Esta acción eliminará al usuario y TODAS LAS MÁQUINAS que haya publicado. ¿Estás seguro/a?")) return;
+        try {
+            await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+            fetchUsers();
+            fetchMachines(); // Refresh machines since they cascade
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleRoleChange = async (id: string, newRole: string) => {
+        if (!confirm(`¿Cambiar rol a ${newRole}?`)) return;
+        try {
+            await fetch(`/api/admin/users/${id}`, {
+                method: 'PUT',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ role: newRole })
+            });
+            fetchUsers();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-4">
-            <div className="max-w-4xl mx-auto space-y-12">
-                
-                {/* Section 1: Create */}
+            <div className="max-w-5xl mx-auto space-y-8">
+                {/* Header & Tabs */}
                 <div>
+                    <div className="mb-6">
+                        <h1 className="text-3xl font-bold text-brand-black">Panel de Administración</h1>
+                        <p className="text-gray-500">Control maestro de la plataforma.</p>
+                    </div>
+
+                    <div className="flex bg-white rounded-xl shadow-sm border border-gray-100 p-1 mb-8 overflow-x-auto hide-scrollbar">
+                        <button 
+                            onClick={() => setActiveTab('overview')}
+                            className={`flex min-w-[120px] flex-1 items-center justify-center gap-2 py-3 px-4 font-bold text-sm rounded-lg transition-colors ${activeTab === 'overview' ? 'bg-brand-yellow text-brand-black shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
+                        >
+                            <LayoutDashboard className="w-4 h-4 shrink-0" /> Resumen
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('catalog')}
+                            className={`flex min-w-[140px] flex-1 items-center justify-center gap-2 py-3 px-4 font-bold text-sm rounded-lg transition-colors ${activeTab === 'catalog' ? 'bg-brand-yellow text-brand-black shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
+                        >
+                            <List className="w-4 h-4 shrink-0" /> Catálogo ({machines.length})
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('users')}
+                            className={`flex min-w-[140px] flex-1 items-center justify-center gap-2 py-3 px-4 font-bold text-sm rounded-lg transition-colors ${activeTab === 'users' ? 'bg-brand-yellow text-brand-black shadow-sm' : 'text-gray-500 hover:bg-gray-50'}`}
+                        >
+                            <UsersIcon className="w-4 h-4 shrink-0" /> Usuarios ({usersList.length})
+                        </button>
+                    </div>
+                </div>
+
+                {/* OVERVIEW TAB */}
+                {activeTab === 'overview' && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+                                <UsersIcon className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-gray-500 uppercase tracking-wider">Total Usuarios</p>
+                                <p className="text-3xl font-black text-brand-black">{usersList.length}</p>
+                            </div>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div className="w-14 h-14 bg-brand-yellow/20 text-yellow-700 rounded-full flex items-center justify-center">
+                                <List className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-gray-500 uppercase tracking-wider">Máquinas Registradas</p>
+                                <p className="text-3xl font-black text-brand-black">{machines.length}</p>
+                            </div>
+                        </div>
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                            <div className="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+                                <Star className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-gray-500 uppercase tracking-wider">Máquinas Activas</p>
+                                <p className="text-3xl font-black text-brand-black">{machines.filter(m => m.status === 'published').length}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* USERS TAB */}
+                {activeTab === 'users' && (
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <h2 className="text-2xl font-bold mb-6 text-brand-black">Directorio de Clientes</h2>
+                        {isFetchingUsers ? (
+                            <div className="flex justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-gray-400" /></div>
+                        ) : usersList.length === 0 ? (
+                            <p className="text-gray-500 text-center py-8">No hay usuarios registrados.</p>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead>
+                                        <tr className="border-b text-sm text-gray-500 uppercase">
+                                            <th className="font-semibold py-3 px-4">Usuario</th>
+                                            <th className="font-semibold py-3 px-4">Email</th>
+                                            <th className="font-semibold py-3 px-4">Anuncios</th>
+                                            <th className="font-semibold py-3 px-4">Rol</th>
+                                            <th className="font-semibold py-3 px-4 text-right">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {usersList.map(user => (
+                                            <tr key={user.id} className="hover:bg-gray-50 transition-colors border-b">
+                                                <td className="py-4 px-4 font-semibold text-gray-900">{user.name || 'Sin Nombre'}</td>
+                                                <td className="py-4 px-4 text-gray-600">{user.email}</td>
+                                                <td className="py-4 px-4">
+                                                    <span className="bg-gray-100 text-gray-800 font-bold px-3 py-1 rounded-full text-xs">
+                                                        {user.machines_count}
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 px-4">
+                                                    {user.role === 'admin' ? (
+                                                        <span className="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full text-xs">Administrador</span>
+                                                    ) : (
+                                                        <span className="bg-gray-100 text-gray-600 font-bold px-3 py-1 rounded-full text-xs">Cliente</span>
+                                                    )}
+                                                </td>
+                                                <td className="py-4 px-4 text-right flex items-center justify-end gap-2">
+                                                    <select 
+                                                        value={user.role} 
+                                                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                                        className="text-xs border rounded p-1.5 bg-white outline-none cursor-pointer"
+                                                    >
+                                                        <option value="client">Cliente</option>
+                                                        <option value="admin">Admin</option>
+                                                    </select>
+                                                    <button 
+                                                        onClick={() => handleDeleteUser(user.id)}
+                                                        className="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors inline-block"
+                                                        title="Eliminar usuario y todas sus máquinas"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* CATALOG TAB & FORMS */}
+                <div style={{ display: activeTab === 'catalog' ? 'block' : 'none' }}>
                     <div className="mb-6 flex items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-bold text-brand-black">{editingId ? 'Editar Máquina' : 'Panel de Administración'}</h1>
-                            <p className="text-gray-500">{editingId ? 'Modifica la información de esta máquina y guarda los cambios.' : 'Agrega nuevas maquinarias al catálogo público.'}</p>
+                            <h2 className="text-2xl font-bold text-brand-black">{editingId ? 'Editar Máquina' : 'Publicar Nueva Máquina'}</h2>
                         </div>
                         {editingId && (
                             <button type="button" onClick={handleCancelEdit} className="flex items-center gap-2 text-sm text-gray-600 hover:text-red-600 border border-gray-200 hover:border-red-300 px-4 py-2 rounded-xl transition-colors bg-white shadow-sm">
@@ -296,6 +490,19 @@ export default function AdminDashboard() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-900 mb-2">Precio (COP)</label>
                                 <input type="text" value={priceInput} onChange={handlePriceChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white" placeholder="Ej: 350.000.000" />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-900 mb-2">Nivel de Visibilidad</label>
+                                <select 
+                                    value={visibilityTier} 
+                                    onChange={(e) => setVisibilityTier(e.target.value as "free" | "featured" | "premium")} 
+                                    className="w-full px-4 py-2 flex-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow/50 outline-none text-gray-900 bg-white min-h-[42px]"
+                                >
+                                    <option value="free">Estándar (Gratis)</option>
+                                    <option value="featured">Destacado</option>
+                                    <option value="premium">Premium MAX</option>
+                                </select>
                             </div>
 
                             <div>
@@ -377,8 +584,23 @@ export default function AdminDashboard() {
                                         <h3 className="font-bold text-gray-900 truncate flex items-center gap-2">
                                             {machine.title}
                                             {machine.is_featured && <span className="text-[10px] bg-brand-yellow px-2 py-0.5 rounded-full uppercase tracking-wider text-brand-black">Destacada</span>}
+                                            {(machine as any).visibility_tier === 'premium' && <span className="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Premium MAX</span>}
+                                            {(machine as any).visibility_tier === 'featured' && <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Destacado</span>}
                                         </h3>
-                                        <p className="text-sm text-gray-500 truncate mb-1">{machine.location} • ${machine.price ? Number(machine.price).toLocaleString("es-CO") : 0}</p>
+                                        <p className="text-sm text-gray-500 truncate mb-1">
+                                            {machine.location} • ${machine.price ? Number(machine.price).toLocaleString("es-CO") : 0} 
+                                            <br className="sm:hidden" />
+                                            <span className="hidden sm:inline"> • </span>
+                                            Publicado por: <span className="font-semibold text-gray-700">{machine.seller_name || machine.seller_email || 'Tienda Principal'}</span>
+                                        </p>
+                                        <p className="text-[11px] text-gray-600 mb-2 flex items-center gap-2">
+                                            Estado: {(machine as any).status === 'pending' ? <span className="bg-gray-200 px-2 py-0.5 rounded-sm font-bold">Borrador</span> : <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-sm font-bold">Pública</span>}
+                                            {machine.expires_at && (
+                                                <span className="text-gray-400">
+                                                    | Vence: <span className="text-gray-600 font-semibold">{new Date(machine.expires_at).toLocaleDateString()}</span>
+                                                </span>
+                                            )}
+                                        </p>
                                         <div className="flex flex-wrap gap-1">
                                             {machine.tags?.map(tag => (
                                                 <span key={tag} className="text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
