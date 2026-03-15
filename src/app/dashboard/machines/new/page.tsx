@@ -19,6 +19,7 @@ export default function NewMachinePage() {
     const [usageType, setUsageType] = useState("hours"); // hours | km
     const [visibilityTier, setVisibilityTier] = useState("basico"); // basico | plata | oro
     const [isUrgent, setIsUrgent] = useState(false);
+    const [currency, setCurrency] = useState("COP"); // COP | USD
     
     // File upload state for Blob
     const [files, setFiles] = useState<File[]>([]);
@@ -115,6 +116,7 @@ export default function NewMachinePage() {
                 usage_type: usageType,
                 visibility_tier: visibilityTier,
                 is_urgent: visibilityTier === 'basico' ? false : isUrgent,
+                currency: currency,
                 images: uploadedUrls,
                 tags: [] // Simplification
             };
@@ -270,14 +272,24 @@ export default function NewMachinePage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Precio (COP) - Opcional</label>
-                            <input
-                                type="number"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                                className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-yellow transition-all"
-                                placeholder="Ej. 150000000"
-                            />
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Precio - Opcional</label>
+                            <div className="flex gap-2">
+                                <select 
+                                    value={currency} 
+                                    onChange={(e) => setCurrency(e.target.value)}
+                                    className="px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-yellow transition-all w-28"
+                                >
+                                    <option value="COP">COP</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                                <input
+                                    type="number"
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
+                                    className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-yellow transition-all"
+                                    placeholder={currency === 'COP' ? "Ej. 150000000" : "Ej. 45000"}
+                                />
+                            </div>
                         </div>
 
                         <div>

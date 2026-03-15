@@ -33,7 +33,8 @@ export async function POST(req: Request) {
             contact_phone,
             contact_phone_2,
             contact_email,
-            is_urgent
+            is_urgent,
+            currency
         } = body;
 
         // Handle expiration logic based on new monetization tiers
@@ -70,7 +71,8 @@ export async function POST(req: Request) {
                 contact_phone_2,
                 contact_email,
                 expires_at,
-                is_urgent
+                is_urgent,
+                currency
             )
             VALUES (
                 ${title},
@@ -92,7 +94,8 @@ export async function POST(req: Request) {
                 ${contact_phone_2 || null},
                 ${contact_email || null},
                 ${expiresAtQuery},
-                ${is_urgent ? true : false}
+                ${is_urgent ? true : false},
+                ${currency || 'COP'}
             )
         `;
 

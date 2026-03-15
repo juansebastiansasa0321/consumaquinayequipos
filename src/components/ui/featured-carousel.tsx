@@ -16,6 +16,7 @@ export type FeaturedMachine = {
   visibility_tier?: string;
   usage_type?: string;
   is_urgent?: boolean;
+  currency?: string;
 };
 
 export function FeaturedCarousel({ 
@@ -110,7 +111,7 @@ export function FeaturedCarousel({
                 {/* Price badge */}
                 {fm.price && (
                   <div className={`absolute bottom-4 right-4 text-white font-black text-sm md:text-base px-3 py-1.5 rounded-full shadow-lg z-10 ${fm.is_urgent ? 'bg-red-600' : 'bg-brand-black/80 backdrop-blur'}`}>
-                    ${Number(fm.price).toLocaleString('es-CO')}
+                    {fm.currency === 'USD' ? 'US$' : '$'}{Number(fm.price).toLocaleString('es-CO')} {fm.currency === 'USD' ? 'USD' : ''}
                   </div>
                 )}
                 {/* Location badge */}

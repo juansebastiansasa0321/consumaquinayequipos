@@ -14,6 +14,7 @@ type Machine = {
     expires_at: string | null;
     whatsapp_clicks: number;
     images: string[];
+    currency?: string;
 };
 
 export default function ClientMachinesPage() {
@@ -150,7 +151,7 @@ export default function ClientMachinesPage() {
                                     
                                     <div className="flex flex-col gap-2 mb-4">
                                         <p className="text-2xl font-bold text-brand-yellow">
-                                            {machine.price ? `$${Number(machine.price).toLocaleString()}` : "Consultar precio"}
+                                            {machine.price ? `${machine.currency === 'USD' ? 'US$' : '$'}${Number(machine.price).toLocaleString()} ${machine.currency === 'USD' ? 'USD' : ''}` : "Consultar precio"}
                                         </p>
                                         <div className="flex items-center gap-2">
                                             <span className="inline-flex items-center gap-1.5 bg-[#25D366]/10 text-[#25D366] px-2.5 py-1 rounded-lg text-sm font-bold border border-[#25D366]/20">

@@ -22,6 +22,7 @@ type Machine = {
     contact_phone?: string;
     contact_phone_2?: string;
     contact_email?: string;
+    currency?: string;
 };
 
 async function getMachine(id: string): Promise<Machine | null> {
@@ -174,7 +175,7 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                     {/* Price */}
                     <div className="px-6 py-3 border-t border-gray-100 mt-2">
                         <span className="text-2xl md:text-3xl font-black text-brand-black">
-                            {machine.price ? `$${Number(machine.price).toLocaleString("es-CO")}` : "Precio a consultar"}
+                            {machine.price ? `${machine.currency === 'USD' ? 'US$' : '$'}${Number(machine.price).toLocaleString("es-CO")} ${machine.currency === 'USD' ? 'USD' : ''}` : "Precio a consultar"}
                         </span>
                     </div>
 

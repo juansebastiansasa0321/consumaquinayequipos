@@ -20,7 +20,7 @@ export async function GET() {
         const userId = payload.id as string;
 
         const machines = await sql`
-            SELECT id, title, price, status, visibility_tier, created_at, images, expires_at, whatsapp_clicks
+            SELECT id, title, price, status, visibility_tier, created_at, images, expires_at, whatsapp_clicks, currency
             FROM machines
             WHERE user_id = ${userId}
             ORDER BY created_at DESC

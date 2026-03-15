@@ -24,6 +24,7 @@ export default function EditMachinePage() {
     const [usageType, setUsageType] = useState("hours");
     const [visibilityTier, setVisibilityTier] = useState("basico");
     const [isUrgent, setIsUrgent] = useState(false);
+    const [currency, setCurrency] = useState("COP");
     
     const [existingImages, setExistingImages] = useState<string[]>([]);
     const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
@@ -54,6 +55,7 @@ export default function EditMachinePage() {
                     setUsageType(m.usage_type || "hours");
                     setVisibilityTier(m.visibility_tier === 'gratis' ? 'basico' : (m.visibility_tier || "basico"));
                     setIsUrgent(m.is_urgent || false);
+                    setCurrency(m.currency || "COP");
                     setExistingImages(m.images || []);
                 } else {
                     setError(data.error || "No se pudo cargar la máquina.");
@@ -162,6 +164,7 @@ export default function EditMachinePage() {
                 usage_type: usageType,
                 visibility_tier: visibilityTier,
                 is_urgent: visibilityTier === 'basico' ? false : isUrgent,
+                currency: currency,
                 images: finalImages
             };
 
@@ -301,8 +304,24 @@ export default function EditMachinePage() {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Precio (COP) - Opcional</label>
-                            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-yellow" />
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Precio - Opcional</label>
+                            <div className="flex gap-2">
+                                <select 
+                                    value={currency} 
+                                    onChange={(e) => setCurrency(e.target.value)}
+                                    className="px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-yellow transition-all w-28"
+                                >
+                                    <option value="COP">COP</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                                <input 
+                                    type="number" 
+                                    value={price} 
+                                    onChange={(e) => setPrice(e.target.value)} 
+                                    className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-brand-yellow" 
+                                    placeholder={currency === 'COP' ? "Ej. 150000000" : "Ej. 45000"}
+                                />
+                            </div>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">Ubicación</label>

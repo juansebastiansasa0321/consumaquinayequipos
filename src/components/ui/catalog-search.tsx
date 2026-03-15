@@ -18,6 +18,7 @@ type Machine = {
     usage_type?: string;
     visibility_tier?: string;
     is_urgent?: boolean;
+    currency?: string;
 };
 
 export function CatalogSearch({ machines }: { machines: Machine[] }) {
@@ -136,7 +137,7 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                 
                                 {machine.price && (
                                     <div className={`absolute bottom-3 left-3 text-white text-xs md:text-sm font-black px-3 py-1.5 rounded-full z-10 ${machine.is_urgent ? 'bg-red-600' : 'bg-brand-black/75 backdrop-blur'}`}>
-                                        ${Number(machine.price).toLocaleString("es-CO")}
+                                        {machine.currency === 'USD' ? 'US$' : '$'}{Number(machine.price).toLocaleString("es-CO")} {machine.currency === 'USD' ? 'USD' : ''}
                                     </div>
                                 )}
                             </div>
@@ -152,7 +153,7 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                 </div>
                                 <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                                     <span className="font-black text-lg text-brand-black">
-                                        {machine.price ? `$${Number(machine.price).toLocaleString("es-CO")}` : "Consultar precio"}
+                                        {machine.price ? `${machine.currency === 'USD' ? 'US$' : '$'}${Number(machine.price).toLocaleString("es-CO")} ${machine.currency === 'USD' ? 'USD' : ''}` : "Consultar precio"}
                                     </span>
                                     <span className="text-xs font-bold text-brand-yellow group-hover:underline">Ver detalles →</span>
                                 </div>
