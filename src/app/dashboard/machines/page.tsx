@@ -172,6 +172,13 @@ export default function ClientMachinesPage() {
                                         Eliminar
                                     </button>
                                     <Link 
+                                        href={`/maquina/${machine.id}/landing`}
+                                        target="_blank" 
+                                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-400 font-medium rounded-xl transition-colors shadow-sm active:scale-95"
+                                    >
+                                        🌐 Landing
+                                    </Link>
+                                    <Link 
                                         href={`/maquina/${machine.id}`}
                                         target="_blank" 
                                         className="col-span-2 sm:col-span-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-yellow/10 hover:bg-brand-yellow/20 border border-brand-yellow/30 text-brand-yellow font-medium rounded-xl transition-colors sm:ml-auto shadow-sm active:scale-95"
@@ -179,6 +186,7 @@ export default function ClientMachinesPage() {
                                         Ver en tienda →
                                     </Link>
                                 </div>
+
                             </div>
                         </div>
                     ))}

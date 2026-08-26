@@ -2,23 +2,61 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Excavadora Zoomlion ZE215G 21 Toneladas | Venta en Cali y Colombia | Consumaquinayequipos",
+  title: "Excavadora Zoomlion ZE215G 21 Toneladas | Venta en Cali, Valle del Cauca y Colombia",
   description:
-    "Venta de excavadora hidráulica sobre orugas Zoomlion ZE215G de 21 toneladas. Motor Cummins 173 HP, cabina ROPS, entrega inmediata en Palmira, Valle del Cauca. Cotiza ya por WhatsApp.",
+    "Venta excavadora hidráulica Zoomlion ZE215G 21 toneladas. Motor Cummins 173 HP. Entrega inmediata Palmira y Cali, Valle del Cauca. Despacho a Buenaventura, Tulúa, Buga, Cartago, Popayán, Medellín y todo Colombia. Cotiza por WhatsApp.",
   keywords: [
-    "excavadora Zoomlion ZE215G",
-    "excavadora 21 toneladas Cali",
-    "excavadora hidráulica Colombia",
-    "Zoomlion excavadora Valle del Cauca",
+    "excavadora Zoomlion ZE215G Cali",
+    "excavadora 21 toneladas Valle del Cauca",
+    "excavadora hidráulica Cali Colombia",
+    "Zoomlion excavadora Palmira",
     "comprar excavadora Cali",
-    "maquinaria pesada Colombia",
+    "excavadora 21 toneladas Colombia",
+    "maquinaria pesada Cali",
+    "excavadora Buenaventura",
+    "excavadora Tulúa Valle",
+    "excavadora Buga Colombia",
+    "excavadora Cartago Valle",
+    "maquinaria pesada Valle del Cauca",
+    "excavadora Popayán Cauca",
+    "Zoomlion Colombia precio",
+    "excavadora sobre orugas Colombia",
+    "excavadora minería Colombia",
+    "maquinaria pesada Medellín",
+    "venta excavadora usada nueva Colombia",
   ],
   openGraph: {
-    title: "Excavadora Zoomlion ZE215G 21T – Entrega Inmediata Palmira, Valle",
+    title: "Excavadora Zoomlion ZE215G 21T – Entrega desde Palmira, Valle del Cauca",
     description:
-      "Motor Cummins 173 HP · Cabina ROPS · Sistema hidráulico E-COT · Línea para martillo incluida. ¡Cotiza ahora por WhatsApp!",
+      "Motor Cummins 173 HP · Cabina ROPS · Sistema E-COT · Disponible en Cali, Palmira y despacho a todo Colombia. ¡Cotiza ahora!",
     type: "website",
+    locale: "es_CO",
   },
+};
+
+// JSON-LD Schema para Google — ayuda a aparecer en búsquedas de producto
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "Excavadora Zoomlion ZE215G 21 Toneladas",
+  description: "Excavadora hidráulica sobre orugas de 21 toneladas. Motor Cummins B6.7 173 HP. Sistema hidráulico E-COT. Cabina ROPS con aire acondicionado. Entrega inmediata en Palmira, Cali y Valle del Cauca.",
+  brand: { "@type": "Brand", name: "Zoomlion" },
+  model: "ZE215G",
+  offers: {
+    "@type": "Offer",
+    availability: "https://schema.org/InStock",
+    priceCurrency: "USD",
+    seller: { "@type": "Organization", name: "Consumaquinayequipos" },
+    areaServed: [
+      "Cali", "Palmira", "Buenaventura", "Tulúa", "Buga", "Cartago", "Valle del Cauca",
+      "Popayán", "Cauca", "Medellín", "Bogotá", "Colombia"
+    ],
+  },
+  additionalProperty: [
+    { "@type": "PropertyValue", name: "Peso operativo", value: "22000 kg" },
+    { "@type": "PropertyValue", name: "Potencia motor", value: "129 kW / 173 HP" },
+    { "@type": "PropertyValue", name: "Profundidad excavación", value: "6680 mm" },
+  ]
 };
 
 const WHATSAPP_NUMBER = "573105753752";
@@ -64,6 +102,11 @@ const features = [
 export default function LandingZoomlionZE215G() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden">
+      {/* JSON-LD Schema para Google */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* ── HERO ── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -293,6 +336,51 @@ export default function LandingZoomlionZE215G() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── COBERTURA REGIONAL ── */}
+      <section className="py-16 md:py-20 bg-[#0d0d0d]">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-10">
+            <span className="text-yellow-400 text-xs font-bold uppercase tracking-[0.3em] mb-3 block">Cobertura</span>
+            <h2 className="text-2xl md:text-4xl font-black text-white">
+              La entregamos donde la necesitas
+            </h2>
+            <p className="text-gray-500 mt-3 text-sm max-w-xl mx-auto">
+              Coordinamos el transporte desde Palmira a cualquier obra en Colombia
+            </p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {[
+              { city: "Cali", dept: "Valle del Cauca", priority: true },
+              { city: "Palmira", dept: "Valle · Stock aquí", priority: true },
+              { city: "Buenaventura", dept: "Valle del Cauca", priority: false },
+              { city: "Tulúa", dept: "Valle del Cauca", priority: false },
+              { city: "Buga", dept: "Valle del Cauca", priority: false },
+              { city: "Cartago", dept: "Valle del Cauca", priority: false },
+              { city: "Popayán", dept: "Cauca", priority: false },
+              { city: "Medellín", dept: "Antioquia", priority: false },
+              { city: "Bogotá", dept: "Cundinamarca", priority: false },
+              { city: "Pasto", dept: "Nariño", priority: false },
+              { city: "Pereira", dept: "Risaralda", priority: false },
+              { city: "Barranquilla", dept: "Atlántico", priority: false },
+            ].map((loc) => (
+              <div
+                key={loc.city}
+                className={`p-3 rounded-xl border text-center transition-all ${
+                  loc.priority
+                    ? "border-yellow-400/40 bg-yellow-400/10"
+                    : "border-white/5 bg-white/[0.02] hover:bg-white/[0.04]"
+                }`}
+              >
+                <div className={`font-black text-sm ${loc.priority ? "text-yellow-400" : "text-white"}`}>
+                  {loc.city}
+                </div>
+                <div className="text-gray-500 text-[10px] mt-0.5">{loc.dept}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

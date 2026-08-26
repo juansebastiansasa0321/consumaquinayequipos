@@ -241,26 +241,22 @@ export default function AdminDashboard() {
         if (direction === 'up' && currentIndex === 0) return;
         if (direction === 'down' && currentIndex === machines.length - 1) return;
 
+        // Build new ordered list by swapping positions
+        const newOrder = [...machines];
         const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-        const targetMachine = machines[targetIndex];
+        [newOrder[currentIndex], newOrder[targetIndex]] = [newOrder[targetIndex], newOrder[currentIndex]];
 
-        // Swap their display_order values
-        const currentOrder = machine.display_order || currentIndex;
-        const targetOrder = targetMachine.display_order || targetIndex;
-
+        // Assign sequential display_order values and save all at once
         try {
-            await Promise.all([
-                fetch(`/api/machines/${machine.id}`, {
-                    method: 'PUT',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ display_order: targetOrder })
-                }),
-                fetch(`/api/machines/${targetMachine.id}`, {
-                    method: 'PUT',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ display_order: currentOrder })
-                })
-            ]);
+            await Promise.all(
+                newOrder.map((m, idx) =>
+                    fetch(`/api/machines/${m.id}`, {
+                        method: 'PUT',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ display_order: idx })
+                    })
+                )
+            );
             fetchMachines();
         } catch (err) {
             console.error(err);
@@ -635,6 +631,15 @@ export default function AdminDashboard() {
                                         >
                                             <Star className={`w-5 h-5 ${machine.is_featured ? 'fill-brand-black' : ''}`} />
                                         </button>
+                                        <a
+                                            href={`/maquina/${machine.id}/landing`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="p-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg transition-colors flex items-center"
+                                            title="Ver Landing Page de esta máquina"
+                                        >
+                                            🌐
+                                        </a>
                                         <button 
                                             onClick={() => handleEdit(machine)}
                                             className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
