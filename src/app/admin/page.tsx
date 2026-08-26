@@ -580,8 +580,8 @@ export default function AdminDashboard() {
                                         <h3 className="font-bold text-gray-900 truncate flex items-center gap-2">
                                             {machine.title}
                                             {machine.is_featured && <span className="text-[10px] bg-brand-yellow px-2 py-0.5 rounded-full uppercase tracking-wider text-brand-black">Destacada</span>}
-                                            {(machine as any).visibility_tier === 'premium' && <span className="text-[10px] bg-purple-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Premium MAX</span>}
-                                            {(machine as any).visibility_tier === 'featured' && <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Destacado</span>}
+                                            {(machine as any).visibility_tier === 'oro' && <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">★ Oro — En Destacados</span>}
+                                            {(machine as any).visibility_tier === 'plata' && <span className="text-[10px] bg-sky-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Plata</span>}
                                         </h3>
                                         <p className="text-sm text-gray-500 truncate mb-1">
                                             {machine.location} • ${machine.price ? Number(machine.price).toLocaleString("es-CO") : 0} 
@@ -626,10 +626,14 @@ export default function AdminDashboard() {
                                         </div>
                                         <button 
                                             onClick={() => handleFeature(machine.id)}
-                                            className={`p-2 rounded-lg transition-colors ${machine.is_featured ? 'bg-brand-yellow text-brand-black' : 'bg-gray-100 text-gray-600 hover:bg-yellow-100'}`}
-                                            title="Marcar como Destacada"
+                                            className={`p-2 rounded-lg transition-colors ${
+                                                (machine as any).visibility_tier === 'oro' 
+                                                ? 'bg-amber-400 text-black' 
+                                                : 'bg-gray-100 text-gray-600 hover:bg-yellow-100'
+                                            }`}
+                                            title={(machine as any).visibility_tier === 'oro' ? 'Tier ORO — aparece en Destacados' : 'Marcar como Destacada (requiere tier Oro)'}
                                         >
-                                            <Star className={`w-5 h-5 ${machine.is_featured ? 'fill-brand-black' : ''}`} />
+                                            <Star className={`w-5 h-5 ${ (machine as any).visibility_tier === 'oro' ? 'fill-black' : ''}`} />
                                         </button>
                                         <a
                                             href={`/maquina/${machine.id}/landing`}

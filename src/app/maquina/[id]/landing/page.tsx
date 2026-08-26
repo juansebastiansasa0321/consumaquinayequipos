@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { sql } from "@/lib/db";
 
@@ -135,12 +134,12 @@ export default async function MachineLandingPage({ params }: { params: Promise<{
               </svg>
               Cotizar por WhatsApp
             </a>
-            <Link
-              href={`/maquina/${id}`}
+            <a
+              href={`tel:+573105753752`}
               className="inline-flex items-center justify-center gap-2 px-6 py-4 border border-white/20 hover:border-white/40 text-white font-bold rounded-2xl transition-all hover:bg-white/5"
             >
-              Ver en catálogo →
-            </Link>
+              📞 +57 310 575 3752
+            </a>
           </div>
         </div>
       </section>
@@ -240,11 +239,10 @@ export default async function MachineLandingPage({ params }: { params: Promise<{
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="border-t border-white/5 py-8 bg-[#080808]">
-        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-600">
-          <Link href="/" className="hover:text-yellow-400 transition-colors font-bold text-gray-400">← Volver al catálogo</Link>
-          <span>© 2026 Consumaquinayequipos · {machine.location}</span>
+      {/* ── FOOTER MÍNIMO ── */}
+      <footer className="border-t border-white/5 py-6 bg-[#080808]">
+        <div className="container mx-auto px-4 text-center text-xs text-gray-600">
+          © 2026 Consumaquinayequipos · {machine.location}
         </div>
       </footer>
 
