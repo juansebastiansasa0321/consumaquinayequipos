@@ -81,7 +81,7 @@ export function FeaturedCarousel({
                 : 'border border-gray-100'
             }`}>
               {/* Image */}
-              <div className="relative h-[220px] sm:h-[300px] md:h-[400px] rounded-2xl overflow-hidden group">
+              <div className="relative w-full aspect-[4/3] md:aspect-[3/2] rounded-2xl overflow-hidden group">
                 <Image
                   src={fm.images?.[0] || "/zoomlion.png"}
                   alt={fm.title}

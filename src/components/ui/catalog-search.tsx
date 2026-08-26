@@ -102,7 +102,7 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                 : 'border border-gray-100 hover:border-brand-yellow/40'
                             }`}
                         >
-                            <div className="relative h-52 sm:h-60 w-full bg-gray-100 overflow-hidden">
+                            <div className="relative w-full aspect-[4/3] bg-gray-100 overflow-hidden">
                                 {machine.images && machine.images.length > 0 ? (
                                     <Image
                                         src={machine.images[0]}
