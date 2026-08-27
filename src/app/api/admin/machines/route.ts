@@ -33,7 +33,7 @@ export async function GET() {
                 u.email as seller_email
             FROM machines m
             LEFT JOIN users u ON m.user_id = u.id
-            ORDER BY m.created_at DESC
+            ORDER BY m.display_order ASC, m.id ASC
         `;
         return NextResponse.json({ machines: rows }); 
     } catch (error) {

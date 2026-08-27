@@ -30,12 +30,22 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             // Full update
             const { title, description, price, hours, location, tags, images, usage_type, visibility_tier, contact_phone, contact_phone_2, contact_email, is_urgent, currency } = body;
             
-            let durationDays = 30; // default for gratis
-            if (visibility_tier === 'plata') {
-                durationDays = 45;
-            } else if (visibility_tier === 'oro') {
-                durationDays = 60;
-            }
+            // Map form values to DB values
+            const tierMap: Record<string, string> = {
+                'free': 'basico',
+                'featured': 'plata',
+                'premium': 'oro',
+                // Already correct DB values — pass through
+                'basico': 'basico',
+                'plata': 'plata',
+                'oro': 'oro',
+            };
+            const dbTier = tierMap[visibility_tier] || 'basico';
+
+            let durationDays = 30;
+            if (dbTier === 'plata') durationDays = 45;
+            else if (dbTier === 'oro') durationDays = 60;
+
             await sql`
                 UPDATE machines
                 SET title = ${title},
@@ -47,7 +57,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                     contact_phone = ${contact_phone || null},
                     contact_phone_2 = ${contact_phone_2 || null},
                     contact_email = ${contact_email || null},
-                    visibility_tier = ${visibility_tier || 'gratis'},
+                    visibility_tier = ${dbTier},
+                    status = 'published',
                     expires_at = CURRENT_TIMESTAMP + (${durationDays} * INTERVAL '1 day'),
                     tags = ${tags ? tags.map(String) : []}::TEXT[],
                     images = ${images ? images.map(String) : []}::TEXT[],
