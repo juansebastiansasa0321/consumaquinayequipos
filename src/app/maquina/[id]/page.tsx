@@ -118,7 +118,7 @@ export default async function MachineDetailPage({ params }: { params: Promise<{ 
 }
 
 function MachineDetailView({ machine, similar }: { machine: Machine; similar: Machine[] }) {
-    const contactNumberRaw = machine.contact_phone || "573054265677";
+    const contactNumberRaw = machine.contact_phone || "573105753752";
     const contactPhoneNumber = contactNumberRaw.replace(/\D/g, '');
     const message = encodeURIComponent(`Hola, estoy interesado en la máquina: ${machine.title}. ¿Podría darme más información?`);
 

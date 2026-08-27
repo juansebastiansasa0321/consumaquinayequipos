@@ -1,10 +1,31 @@
 export const dynamic = 'force-dynamic';
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, MapPin, Gauge, Star } from "lucide-react";
 import { sql } from "@/lib/db";
 import { CatalogSearch } from "@/components/ui/catalog-search";
 import { FeaturedCarousel } from "@/components/ui/featured-carousel";
+
+export const metadata: Metadata = {
+  title: "Excavadora Zoomlion 21 Toneladas en Cali | Maquinaria Pesada Colombia",
+  description: "Venta excavadora Zoomlion ZE215E 21 toneladas en Cali y Valle del Cauca. Motor Cummins 173 HP, entrega inmediata. Minicargadores, volquetas y maquinaria pesada para minería e infraestructura. Cotiza: +57 310 575 3752.",
+  keywords: [
+    "excavadora 21 toneladas Cali",
+    "Zoomlion ZE215E Colombia",
+    "maquinaria pesada Cali",
+    "excavadora Valle del Cauca",
+    "venta excavadora Colombia",
+    "minicargador Colombia",
+    "maquinaria pesada mineria Colombia",
+  ],
+  openGraph: {
+    title: "Excavadora Zoomlion 21 Toneladas | Cali, Valle del Cauca",
+    description: "Motor Cummins 173 HP · Entrega inmediata en Cali · Despacho a todo Colombia. Cotiza ahora por WhatsApp.",
+    type: "website",
+    locale: "es_CO",
+  },
+};
 
 // Types
 type Machine = {

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Consumaquinayequipos | Maquinaria Pesada Chocó y Cauca",
-  description: "Distribución especializada de maquinaria pesada, motores industriales y excavadoras de 21 toneladas (Zoomlion) para los sectores de minería e infraestructura en las regiones de Chocó y el Cauca, Colombia.",
+  title: "Excavadora Zoomlion 21 Toneladas en Cali | Consumaquinayequipos",
+  description: "Venta de excavadora hidráulica Zoomlion ZE215E de 21 toneladas en Cali, Valle del Cauca. Motor Cummins 173 HP. Entrega inmediata. También minicargadores, volquetas y maquinaria pesada para minería e infraestructura en Colombia. Cotiza por WhatsApp: +57 310 575 3752.",
 };
 
 import Header from "@/components/layout/header";

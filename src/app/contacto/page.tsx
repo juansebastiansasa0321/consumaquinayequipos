@@ -74,7 +74,7 @@ export default function ContactPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-sm md:text-base">Teléfono / WhatsApp</h3>
-                                        <a href="https://wa.me/573054265677" className="text-gray-400 text-xs md:text-sm mt-1 hover:text-brand-yellow transition-colors block">+57 305 426 5677</a>
+                                        <a href="https://wa.me/573105753752" className="text-gray-400 text-xs md:text-sm mt-1 hover:text-brand-yellow transition-colors block">+57 310 575 3752</a>
                                     </div>
                                 </div>
 
@@ -113,7 +113,7 @@ export default function ContactPage() {
                                 <div className="bg-white p-6 rounded-xl border border-green-100 mb-6">
                                     <p className="font-semibold text-gray-700 mb-4">¿Prefieres atención inmediata?</p>
                                     <a 
-                                        href="https://wa.me/573054265677?text=Hola,%20acabo%20de%20llenar%20el%20formulario%20en%20su%20sitio%20web%20y%20me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n." 
+                                        href="https://wa.me/573105753752?text=Hola,%20acabo%20de%20llenar%20el%20formulario%20en%20su%20sitio%20web%20y%20me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n." 
                                         target="_blank" 
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3 px-6 rounded-lg transition-colors w-full sm:w-auto"

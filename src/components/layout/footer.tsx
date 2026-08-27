@@ -31,8 +31,8 @@ export default function Footer() {
                     <h3 className="text-white font-bold text-lg mb-4">Contacto</h3>
                     <ul className="space-y-3 text-sm flex flex-col">
                         <li>
-                            <a href="tel:+573054265677" className="flex items-center gap-2 hover:text-brand-yellow transition-colors">
-                                <Phone className="w-4 h-4 text-brand-yellow" /> +57 305 426 5677
+                            <a href="tel:+573105753752" className="flex items-center gap-2 hover:text-brand-yellow transition-colors">
+                                <Phone className="w-4 h-4 text-brand-yellow" /> +57 310 575 3752
                             </a>
                         </li>
                         <li>
