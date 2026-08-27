@@ -67,9 +67,9 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                 WHERE id = ${id}
             `;
         } else if ('is_featured' in body) {
-            // If setting one to true, we might want to set all others to false first if we only want 1 featured machine
             if (body.is_featured === true) {
-                await sql`UPDATE machines SET is_featured = false`;
+                // Solo cuando ACTIVAMOS destacado, quitamos a las demás
+                await sql`UPDATE machines SET is_featured = false WHERE id != ${id}`;
             }
             await sql`UPDATE machines SET is_featured = ${body.is_featured} WHERE id = ${id}`;
         } else if ('display_order' in body) {

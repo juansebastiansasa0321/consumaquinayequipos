@@ -223,12 +223,13 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleFeature = async (id: string) => {
+    const handleFeature = async (machine: Machine) => {
+        const newFeatured = !machine.is_featured;
         try {
-            await fetch(`/api/machines/${id}`, {
+            await fetch(`/api/machines/${machine.id}`, {
                 method: 'PUT',
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ is_featured: true })
+                body: JSON.stringify({ is_featured: newFeatured })
             });
             fetchMachines();
         } catch (err) {
@@ -625,15 +626,21 @@ export default function AdminDashboard() {
                                             </button>
                                         </div>
                                         <button 
-                                            onClick={() => handleFeature(machine.id)}
+                                            onClick={() => handleFeature(machine)}
                                             className={`p-2 rounded-lg transition-colors ${
-                                                (machine as any).visibility_tier === 'oro' 
-                                                ? 'bg-amber-400 text-black' 
+                                                machine.is_featured || (machine as any).visibility_tier === 'oro'
+                                                ? 'bg-amber-400 text-black'
                                                 : 'bg-gray-100 text-gray-600 hover:bg-yellow-100'
                                             }`}
-                                            title={(machine as any).visibility_tier === 'oro' ? 'Tier ORO — aparece en Destacados' : 'Marcar como Destacada (requiere tier Oro)'}
+                                            title={
+                                                machine.is_featured
+                                                    ? 'Quitar de Destacados (clic para desmarcar)'
+                                                    : (machine as any).visibility_tier === 'oro'
+                                                    ? 'En Destacados por tier Oro'
+                                                    : 'Añadir a Destacados'
+                                            }
                                         >
-                                            <Star className={`w-5 h-5 ${ (machine as any).visibility_tier === 'oro' ? 'fill-black' : ''}`} />
+                                            <Star className={`w-5 h-5 ${machine.is_featured || (machine as any).visibility_tier === 'oro' ? 'fill-black' : ''}`} />
                                         </button>
                                         <a
                                             href={`/maquina/${machine.id}/landing`}
