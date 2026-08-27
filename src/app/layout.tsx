@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import WhatsAppButton from "@/components/ui/whatsapp-button";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { jwtVerify } from "jose";
 
 export default async function RootLayout({
@@ -44,16 +44,22 @@ export default async function RootLayout({
     }
   }
 
+  // Leer el pathname del header que pone el middleware
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") ?? "";
+  const isLandingPage = pathname.endsWith("/landing");
+
   return (
     <html lang="es" className="scroll-smooth">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-brand-background text-brand-foreground min-h-screen flex flex-col overflow-x-hidden`}>
-        <Header userName={userName} />
+        {!isLandingPage && <Header userName={userName} />}
         <main className="flex-1">
           {children}
         </main>
-        <Footer />
-        <WhatsAppButton />
+        {!isLandingPage && <Footer />}
+        {!isLandingPage && <WhatsAppButton />}
       </body>
     </html>
   );
 }
+

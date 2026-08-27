@@ -48,9 +48,18 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    return NextResponse.next();
+    const response = NextResponse.next();
+    // Pasar el pathname como header para que el root layout pueda leerlo
+    response.headers.set('x-pathname', pathname);
+    return response;
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/admin/:path*', '/login', '/register'],
+    matcher: [
+        '/dashboard/:path*',
+        '/admin/:path*',
+        '/login',
+        '/register',
+        '/((?!_next/static|_next/image|favicon.ico).*)',
+    ],
 };
