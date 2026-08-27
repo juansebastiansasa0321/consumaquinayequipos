@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, MapPin, Gauge, Star, Clock } from "lucide-react";
+import { ArrowRight, MapPin, Gauge, Star, Clock, CheckCircle2 } from "lucide-react";
 
 export type FeaturedMachine = {
   id: string;
@@ -103,6 +103,19 @@ export function FeaturedCarousel({
                   </div>
                 )}
 
+                {/* Badge Condición: Nuevo / Usado */}
+                {fm.hours === 0 && (
+                  <div className={`absolute ${fm.is_urgent ? 'top-12' : 'top-3'} right-3 z-10 flex items-center gap-1.5 bg-emerald-500 text-white text-[10px] md:text-xs font-black px-3 py-1.5 rounded-full shadow-lg border border-emerald-400`}>
+                    <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                    NUEVO
+                  </div>
+                )}
+                {fm.hours > 0 && (
+                  <div className={`absolute ${fm.is_urgent ? 'top-12' : 'top-3'} right-3 z-10 flex items-center gap-1 bg-slate-700/90 backdrop-blur text-white text-[10px] md:text-xs font-bold px-2.5 py-1.5 rounded-full shadow-lg border border-slate-600`}>
+                    🔧 {fm.hours.toLocaleString()} {fm.usage_type === "km" ? "km" : "h"}
+                  </div>
+                )}
+
                 {/* Tier badge */}
                 {fm.visibility_tier === "oro" && (
                   <div className="absolute top-3 left-3 bg-amber-500 text-black text-[10px] md:text-xs font-black px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg border border-yellow-300 z-10">
@@ -132,8 +145,11 @@ export function FeaturedCarousel({
                   {fm.location && (
                     <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {fm.location}</span>
                   )}
+                  {fm.hours === 0 && (
+                    <span className="flex items-center gap-1 text-emerald-600 font-semibold"><CheckCircle2 className="w-3.5 h-3.5" /> Equipo nuevo</span>
+                  )}
                   {fm.hours > 0 && (
-                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {fm.hours.toLocaleString()}{fm.usage_type === "km" ? " km" : "h"}</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {fm.hours.toLocaleString()} {fm.usage_type === "km" ? "km recorridos" : "horas de uso"}</span>
                   )}
                 </div>
                 <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">

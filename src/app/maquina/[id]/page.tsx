@@ -164,9 +164,14 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                                     <MapPin className="w-4 h-4 text-brand-yellow" /> {machine.location}
                                 </span>
                             )}
+                            {machine.hours === 0 && (
+                                <span className="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold px-3 py-1 rounded-full text-xs">
+                                    <span className="w-2 h-2 bg-emerald-500 rounded-full" /> Equipo Nuevo — 0 horas de uso
+                                </span>
+                            )}
                             {machine.hours > 0 && (
-                                <span className="flex items-center gap-1.5">
-                                    <Clock className="w-4 h-4 text-brand-yellow" /> {machine.hours.toLocaleString()} {machine.usage_type === 'km' ? 'km' : 'horas de uso'}
+                                <span className="inline-flex items-center gap-1.5 bg-gray-100 border border-gray-200 text-gray-600 font-semibold px-3 py-1 rounded-full text-xs">
+                                    <Clock className="w-3.5 h-3.5 text-brand-yellow" /> {machine.hours.toLocaleString()} {machine.usage_type === 'km' ? 'km recorridos' : 'horas de uso'}
                                 </span>
                             )}
                         </div>
@@ -235,6 +240,37 @@ function MachineDetailView({ machine, similar }: { machine: Machine; similar: Ma
                         <div className="text-gray-600 leading-relaxed whitespace-pre-line text-sm md:text-base">
                             {machine.description}
                         </div>
+                    </div>
+                )}
+
+                {/* Condition Card */}
+                {(machine.hours === 0 || machine.hours > 0) && (
+                    <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-5 md:p-6 mb-6">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="w-1 h-6 bg-brand-yellow rounded-full" />
+                            <h2 className="text-base font-bold text-brand-black">Condición del equipo</h2>
+                        </div>
+                        {machine.hours === 0 ? (
+                            <div className="flex items-center gap-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                                <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shrink-0">
+                                    <CheckCircle2 className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="font-black text-emerald-700 text-base">Equipo Nuevo</p>
+                                    <p className="text-emerald-600 text-sm">0 horas de uso · Sin desgaste · Garantía de fábrica</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-4 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                                <div className="w-10 h-10 bg-slate-700 rounded-xl flex items-center justify-center shrink-0">
+                                    <Clock className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="font-black text-gray-800 text-base">Equipo Usado</p>
+                                    <p className="text-gray-600 text-sm">{machine.hours.toLocaleString()} {machine.usage_type === 'km' ? 'kilómetros recorridos' : 'horas de uso registradas'}</p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
 

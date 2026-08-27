@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, X, MapPin, Clock, Star } from "lucide-react";
+import { Search, X, MapPin, Clock, Star, CheckCircle2 } from "lucide-react";
 
 type Machine = {
     id: string;
@@ -121,6 +121,19 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                     </div>
                                 )}
 
+                                {/* Badge Condición: Nuevo / Usado */}
+                                {machine.hours === 0 && (
+                                    <div className={`absolute ${machine.is_urgent ? 'top-12' : 'top-3'} right-3 z-10 flex items-center gap-1.5 bg-emerald-500 text-white text-[10px] md:text-xs font-black px-3 py-1.5 rounded-full shadow-lg border border-emerald-400`}>
+                                        <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                                        NUEVO
+                                    </div>
+                                )}
+                                {machine.hours > 0 && (
+                                    <div className={`absolute ${machine.is_urgent ? 'top-12' : 'top-3'} right-3 z-10 flex items-center gap-1 bg-slate-700/90 backdrop-blur text-white text-[10px] md:text-xs font-bold px-2.5 py-1.5 rounded-full shadow-lg border border-slate-600`}>
+                                        🔧 {machine.hours.toLocaleString()} {machine.usage_type === 'km' ? 'km' : 'h'}
+                                    </div>
+                                )}
+
                                 {/* Oro Badge - Special Shield */}
                                 {machine.visibility_tier === 'oro' && (
                                     <div className="absolute top-3 left-3 bg-amber-500 text-black text-[10px] md:text-xs font-black px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg border border-yellow-300 z-10">
@@ -147,8 +160,11 @@ export function CatalogSearch({ machines }: { machines: Machine[] }) {
                                     {machine.location && (
                                         <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {machine.location}</span>
                                     )}
+                                    {machine.hours === 0 && (
+                                        <span className="flex items-center gap-1 text-emerald-600 font-semibold"><CheckCircle2 className="w-3.5 h-3.5" /> Equipo nuevo</span>
+                                    )}
                                     {machine.hours > 0 && (
-                                        <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {machine.hours.toLocaleString()}{machine.usage_type === 'km' ? ' km' : 'h'}</span>
+                                        <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {machine.hours.toLocaleString()} {machine.usage_type === 'km' ? 'km recorridos' : 'horas de uso'}</span>
                                     )}
                                 </div>
                                 <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
