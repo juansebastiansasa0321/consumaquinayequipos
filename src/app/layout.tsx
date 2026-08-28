@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Excavadora Zoomlion 21 Toneladas en Cali | Consumaquinayequipos",
   description: "Venta de excavadora hidráulica Zoomlion ZE215E de 21 toneladas en Cali, Valle del Cauca. Motor Cummins 173 HP. Entrega inmediata. También minicargadores, volquetas y maquinaria pesada para minería e infraestructura en Colombia. Cotiza por WhatsApp: +57 310 575 3752.",
+  icons: {
+    icon: '/favicon.png',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 import Header from "@/components/layout/header";

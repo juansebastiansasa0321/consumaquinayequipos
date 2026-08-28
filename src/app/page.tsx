@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, MapPin, Gauge, Star } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { sql } from "@/lib/db";
 import { CatalogSearch } from "@/components/ui/catalog-search";
 import { FeaturedCarousel } from "@/components/ui/featured-carousel";
@@ -27,7 +27,6 @@ export const metadata: Metadata = {
   },
 };
 
-// Types
 type Machine = {
   id: string;
   title: string;
@@ -42,12 +41,9 @@ type Machine = {
   is_urgent?: boolean;
 };
 
-// Data Fetching with graceful degradation
 async function getMachines(): Promise<Machine[]> {
   try {
-    if (!process.env.POSTGRES_URL) {
-      return getMockHomeMachines();
-    }
+    if (!process.env.POSTGRES_URL) return getMockHomeMachines();
     const rows = await sql`
         SELECT * FROM machines 
         WHERE status = 'published' AND (expires_at > CURRENT_TIMESTAMP OR expires_at IS NULL)
@@ -64,7 +60,7 @@ async function getMachines(): Promise<Machine[]> {
     `;
     return rows as Machine[];
   } catch (error) {
-    console.error("No se pudo conectar a la base de datos o la tabla no existe:", error);
+    console.error("No se pudo conectar a la base de datos:", error);
     return getMockHomeMachines();
   }
 }
@@ -72,14 +68,14 @@ async function getMachines(): Promise<Machine[]> {
 function getMockHomeMachines(): Machine[] {
   return [
     {
-      id: "demo-machine-1",
-      title: "Excavadora Zoomlion ZE210E 21T (Demo)",
+      id: "4",
+      title: "Excavadora Zoomlion ZE215E 21T",
       description: "Excavadora sobre orugas de 21 toneladas en perfecto estado operativo.",
       price: 350000000,
-      hours: 1200,
+      hours: 0,
       is_featured: true,
-      location: "Quibdó, Chocó",
-      tags: ["Oportunidad", "Entrega Inmediata", "Destacado"],
+      location: "Cali, Valle del Cauca",
+      tags: ["Nuevo", "Entrega Inmediata"],
       images: ["/zoomlion.png"]
     }
   ];
@@ -87,71 +83,121 @@ function getMockHomeMachines(): Machine[] {
 
 export default async function Home() {
   const machines = await getMachines();
-  
-  // Filter machines that should be featured or recommended
+
   const oroMachines = machines.filter(m => m.is_featured || (m as any).visibility_tier === 'oro');
   const plataMachines = machines.filter(m => (m as any).visibility_tier === 'plata');
-  
-  // Combine all featured machines for the carousel
   const carouselMachines = [...oroMachines, ...plataMachines];
-  
-  // Define hero machine (first featured for the hero background)
-  const heroMachine = carouselMachines[0] || machines[0] || getMockHomeMachines()[0];
+
+  // Usar la Zoomlion (id=4) como hero
+  const heroMachine = machines.find(m => m.id === '4') || carouselMachines[0] || machines[0] || getMockHomeMachines()[0];
+
+  const waMessage = encodeURIComponent("Hola, vi la Excavadora Zoomlion ZE215E de 21 toneladas en su página web y me gustaría recibir más información y el precio.");
 
   return (
     <div className="w-full">
-      {/* Hero Section */}
-      <section className="relative w-full h-[60vh] md:h-[80vh] min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden bg-brand-black">
+
+      {/* ═══ HERO ═══ */}
+      <section className="relative w-full min-h-[92vh] flex items-center overflow-hidden bg-brand-black">
         <div className="absolute inset-0 z-0">
           <Image
             src={heroMachine?.images?.[0] || "/zoomlion.png"}
-            alt={heroMachine?.title || "Maquinaria Pesada"}
+            alt="Excavadora Zoomlion ZE215E 21 Toneladas Cali Valle del Cauca"
             fill
-            className="object-cover opacity-40"
+            className="object-cover opacity-30"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/55 to-brand-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-black/85 via-brand-black/20 to-transparent" />
         </div>
 
-        <div className="container relative z-10 px-4 md:px-6 text-center max-w-4xl mx-auto flex flex-col items-center">
-          <div className="inline-block px-4 py-1.5 mb-4 md:mb-6 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow font-semibold text-xs md:text-sm tracking-widest uppercase">
-            Especialistas en Maquinaria Pesada
+        <div className="container relative z-10 px-4 md:px-8 max-w-5xl mx-auto flex flex-col items-start pt-16 pb-28">
+
+          {/* Pill badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full bg-brand-yellow/10 border border-brand-yellow/40 text-brand-yellow font-bold text-xs tracking-widest uppercase">
+            <span className="w-2 h-2 bg-brand-yellow rounded-full animate-pulse" />
+            Disponible — Cali, Valle del Cauca
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-4 md:mb-6 leading-tight">
-            Potencia para{" "}<span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-yellow-500">Minería e Infraestructura</span>
+
+          {/* Heading */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white mb-3 leading-[1.05]">
+            Excavadora<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-yellow-300">
+              Zoomlion ZE215E
+            </span>
           </h1>
-          <p className="text-sm sm:text-base md:text-xl text-gray-300 mb-8 md:mb-10 max-w-xl mx-auto">
-            Distribución especializada de excavadoras y motores industriales para Chocó y Cauca.
+
+          <p className="text-xl md:text-2xl font-bold text-gray-200 mb-2">
+            21 Toneladas · Motor Cummins 173 HP
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-sm sm:max-w-none">
+          <p className="text-base md:text-lg text-gray-400 mb-8 max-w-lg leading-relaxed">
+            Equipo nuevo para minería, infraestructura y movimiento de tierras. Entrega inmediata desde Cali a cualquier región de Colombia.
+          </p>
+
+          {/* Trust pills */}
+          <div className="flex flex-wrap gap-2 mb-10">
+            {["✅ Equipo nuevo", "📍 Cali, Valle del Cauca", "🚛 Despacho a todo Colombia", "💬 Respuesta inmediata"].map(b => (
+              <span key={b} className="text-xs font-semibold text-gray-300 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                {b}
+              </span>
+            ))}
+          </div>
+
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm sm:max-w-none">
+            <a
+              href={`https://wa.me/573105753752?text=${waMessage}`}
+              target="_blank"
+              rel="noreferrer"
+              className="sm:w-auto px-8 py-4 bg-brand-yellow text-brand-black font-black rounded-xl hover:bg-yellow-400 transition-all flex items-center justify-center gap-2 shadow-xl shadow-brand-yellow/25 text-base"
+            >
+              Cotizar por WhatsApp <ArrowRight className="w-5 h-5" />
+            </a>
             <Link
               href="#catalogo"
-              className="w-full sm:w-auto px-8 py-4 bg-brand-yellow text-brand-black font-bold rounded-xl hover:bg-yellow-400 transition-all flex items-center justify-center gap-2 shadow-xl shadow-brand-yellow/20 text-sm md:text-base"
+              className="sm:w-auto px-8 py-4 bg-white/10 border border-white/20 text-white font-bold rounded-xl hover:bg-white/20 transition-all flex items-center justify-center gap-2 text-base backdrop-blur"
             >
-              Ver Catálogo <ArrowRight className="w-5 h-5" />
+              Ver Catálogo Completo
             </Link>
-            <Link
-              href="/dashboard/machines/new"
-              className="w-full sm:w-auto px-8 py-4 bg-white text-brand-black font-black rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-2 text-sm md:text-base shadow-xl"
-            >
-              Publicar Equipo (Gratis)
-            </Link>
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+          <span className="text-white text-[10px] font-semibold tracking-[0.3em] uppercase">Explorar</span>
+          <div className="w-px h-10 bg-gradient-to-b from-white to-transparent" />
+        </div>
+      </section>
+
+      {/* ═══ STATS BAR ═══ */}
+      <section className="bg-brand-yellow py-5">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-14 text-brand-black">
+            {[
+              { label: "Peso operativo", value: "21 Toneladas" },
+              { label: "Motor", value: "Cummins 173 HP" },
+              { label: "Profundidad máx.", value: "6.63 m" },
+              { label: "Ubicación", value: "Cali, Colombia" },
+            ].map(stat => (
+              <div key={stat.label} className="text-center">
+                <p className="font-black text-lg md:text-xl leading-none">{stat.value}</p>
+                <p className="text-[10px] font-bold opacity-60 mt-0.5 uppercase tracking-wider">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Machines Section (Carousel) */}
+      {/* ═══ FEATURED CAROUSEL ═══ */}
       {carouselMachines.length > 0 && (
-        <FeaturedCarousel 
-          featuredMachines={carouselMachines as any} 
-          title="Máquinas Destacadas" 
-          className="-mt-12 mb-16"
+        <FeaturedCarousel
+          featuredMachines={carouselMachines as any}
+          title="Máquinas Destacadas"
+          className="mt-0 mb-16"
         />
       )}
 
-      {/* Dynamic Catalog Section */}
+      {/* ═══ CATALOG ═══ */}
       <section id="catalogo" className="py-8 md:py-16 bg-white text-brand-black">
-        {/* Top border accent */}
         <div className="w-full h-1 bg-gradient-to-r from-brand-yellow via-yellow-400 to-transparent mb-12 md:mb-16" />
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 md:mb-14 gap-4">
@@ -162,25 +208,21 @@ export default async function Home() {
               </div>
               <h2 className="text-3xl md:text-5xl font-bold">Nuestro <span className="text-brand-black">Catálogo</span></h2>
             </div>
-            <p className="text-gray-500 max-w-xs text-sm">
-              Equipos listos para trabajar en tu proyecto
-            </p>
+            <p className="text-gray-500 max-w-xs text-sm">Equipos listos para trabajar en tu proyecto</p>
           </div>
 
           <CatalogSearch machines={machines} />
 
-
-          {/* CTA Banner for Unlisted Machines */}
+          {/* Bottom CTA */}
           <div className="mt-16 bg-brand-black rounded-3xl p-8 md:p-12 text-center text-white border border-brand-gray/20 shadow-xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-yellow/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-            
             <h3 className="text-2xl md:text-4xl font-bold mb-4 relative z-10">¿No encuentras la máquina que buscas?</h3>
             <p className="text-gray-400 mb-8 max-w-2xl mx-auto text-lg relative z-10">
-              Contamos con una amplia red de proveedores. Contáctanos indicando el equipo exacto que necesitas y nosotros lo conseguimos para ti al mejor precio.
+              Contamos con una amplia red de proveedores. Contáctanos con el equipo que necesitas y lo conseguimos al mejor precio.
             </p>
-            <Link 
-              href="/contacto" 
+            <Link
+              href="/contacto"
               className="inline-flex items-center gap-2 bg-brand-yellow text-brand-black px-8 py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors relative z-10 shadow-lg"
             >
               Consultar Equipo Específico <ArrowRight className="w-5 h-5" />
