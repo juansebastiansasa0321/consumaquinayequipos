@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Bloquear rutas privadas
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://consumaquinayequipos.com/sitemap.xml

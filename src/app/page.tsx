@@ -8,24 +8,74 @@ import { CatalogSearch } from "@/components/ui/catalog-search";
 import { FeaturedCarousel } from "@/components/ui/featured-carousel";
 
 export const metadata: Metadata = {
-  title: "Excavadora Zoomlion 21 Toneladas en Cali | Maquinaria Pesada Colombia",
-  description: "Venta excavadora Zoomlion ZE215E 21 toneladas en Cali y Valle del Cauca. Motor Cummins 173 HP, entrega inmediata. Minicargadores, volquetas y maquinaria pesada para minería e infraestructura. Cotiza: +57 310 575 3752.",
+  title: "Excavadora 21 Toneladas en Cali | Zoomlion ZE215E | Maquinaria Pesada Colombia",
+  description: "Venta excavadora hidráulica 21 toneladas en Cali, Valle del Cauca. Zoomlion ZE215E, motor Cummins 173 HP, equipo nuevo, entrega inmediata. Alternativa a Cat 320, Komatsu PC200, Hitachi ZX200, Volvo EC220. Cotiza: +57 310 575 3752.",
   keywords: [
+    // Búsquedas genéricas
+    "excavadora 21 toneladas Colombia",
     "excavadora 21 toneladas Cali",
-    "Zoomlion ZE215E Colombia",
+    "retroexcavadora 21 toneladas",
+    "retroexcavadora 21 toneladas Cali",
+    "excavadora hidraulica 21 toneladas",
+    "excavadora sobre orugas 21 toneladas",
     "maquinaria pesada Cali",
+    "maquinaria pesada Valle del Cauca",
+    "venta maquinaria pesada Colombia",
+    "excavadora nueva Colombia",
+    "excavadora nueva Cali",
+    // Zoomlion específico
+    "Zoomlion ZE215E",
+    "Zoomlion ZE215E Colombia",
+    "Zoomlion ZE215E Cali",
+    "Zoomlion excavadora Colombia",
+    "excavadora Zoomlion 21 toneladas",
+    // Competidores (personas que buscan otras marcas)
+    "excavadora 20 toneladas Cat",
+    "Cat 320 Colombia",
+    "Caterpillar 320 precio Colombia",
+    "Komatsu PC200 Colombia",
+    "Komatsu PC210 Cali",
+    "Hitachi ZX200 Colombia",
+    "Volvo EC220 Colombia",
+    "Hyundai R220 Colombia",
+    "Doosan DX200 Colombia",
+    "JCB JS205 Colombia",
+    // Por uso
+    "excavadora para mineria Colombia",
+    "excavadora para infraestructura",
+    "excavadora movimiento de tierras",
+    "maquinaria pesada mineria Choco",
+    "excavadora Cali entrega inmediata",
+    // Por región
+    "maquinaria pesada Buenaventura",
+    "maquinaria pesada Palmira",
+    "maquinaria pesada Bucaramanga",
+    "maquinaria pesada Medellín",
     "excavadora Valle del Cauca",
-    "venta excavadora Colombia",
-    "minicargador Colombia",
-    "maquinaria pesada mineria Colombia",
   ],
   openGraph: {
-    title: "Excavadora Zoomlion 21 Toneladas | Cali, Valle del Cauca",
-    description: "Motor Cummins 173 HP · Entrega inmediata en Cali · Despacho a todo Colombia. Cotiza ahora por WhatsApp.",
+    title: "Excavadora 21 Toneladas en Cali | Zoomlion ZE215E Nueva",
+    description: "Motor Cummins 173 HP · Equipo nuevo · Entrega inmediata en Cali · Despacho a todo Colombia. Alternativa sólida a Cat, Komatsu e Hitachi. Cotiza ahora.",
     type: "website",
     locale: "es_CO",
+    url: "https://consumaquinayequipos.com",
+    siteName: "Consumaquinayequipos",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Excavadora Zoomlion 21 Toneladas | Cali, Colombia",
+    description: "Equipo nuevo, motor Cummins 173 HP. Disponible en Cali. Cotiza por WhatsApp.",
+  },
+  alternates: {
+    canonical: "https://consumaquinayequipos.com",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
 };
+
 
 type Machine = {
   id: string;
@@ -93,8 +143,62 @@ export default async function Home() {
 
   const waMessage = encodeURIComponent("Hola, vi la Excavadora Zoomlion ZE215E de 21 toneladas en su página web y me gustaría recibir más información y el precio.");
 
+  // JSON-LD Schema para Google Rich Results
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "name": "Consumaquinayequipos",
+        "description": "Venta de maquinaria pesada en Cali, Colombia. Excavadoras, minicargadores y volquetas para minería e infraestructura.",
+        "url": "https://consumaquinayequipos.com",
+        "telephone": "+573105753752",
+        "email": "consumaquinayequipos@icloud.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Cali",
+          "addressRegion": "Valle del Cauca",
+          "addressCountry": "CO"
+        },
+        "geo": { "@type": "GeoCoordinates", "latitude": "3.4516", "longitude": "-76.5320" },
+        "areaServed": ["Cali", "Valle del Cauca", "Chocó", "Cauca", "Colombia"],
+        "sameAs": [
+          "https://instagram.com/consumaquinayequipos",
+          "https://www.facebook.com/profile.php?id=61582161870533"
+        ]
+      },
+      {
+        "@type": "Product",
+        "name": "Excavadora Zoomlion ZE215E 21 Toneladas",
+        "description": "Excavadora hidráulica sobre orugas Zoomlion ZE215E de 21 toneladas. Motor Cummins 4BT3.9-C173, potencia 173 HP, profundidad de excavación 6.63 m. Equipo nuevo disponible en Cali, Colombia.",
+        "brand": { "@type": "Brand", "name": "Zoomlion" },
+        "model": "ZE215E",
+        "category": "Excavadora hidráulica sobre orugas",
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "COP",
+          "availability": "https://schema.org/InStock",
+          "itemCondition": "https://schema.org/NewCondition",
+          "seller": { "@type": "Organization", "name": "Consumaquinayequipos" },
+          "areaServed": "CO"
+        },
+        "additionalProperty": [
+          { "@type": "PropertyValue", "name": "Peso operativo", "value": "21 toneladas" },
+          { "@type": "PropertyValue", "name": "Motor", "value": "Cummins 173 HP" },
+          { "@type": "PropertyValue", "name": "Profundidad de excavación", "value": "6.63 m" },
+          { "@type": "PropertyValue", "name": "Condición", "value": "Nuevo" },
+          { "@type": "PropertyValue", "name": "Ubicación", "value": "Cali, Valle del Cauca" }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="w-full">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* ═══ HERO ═══ */}
       <section className="relative w-full min-h-[92vh] flex items-center overflow-hidden bg-brand-black">
