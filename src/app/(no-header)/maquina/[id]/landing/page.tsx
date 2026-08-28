@@ -11,6 +11,7 @@ type Machine = {
   location: string; tags: string[]; images: string[]; is_featured: boolean;
   usage_type?: string; contact_phone?: string; contact_phone_2?: string;
   contact_email?: string; currency?: string; is_urgent?: boolean;
+  seo_title?: string; seo_description?: string;
 };
 
 async function getMachine(id: string): Promise<Machine | null> {
@@ -26,12 +27,44 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const machine = await getMachine(id);
   if (!machine) return { title: "Máquina no encontrada" };
-  const price = machine.price ? `$${Number(machine.price).toLocaleString("es-CO")} COP` : "";
+
+  const isNew = machine.hours === 0;
+  const condicion = isNew ? "Nuevo" : `${machine.hours?.toLocaleString() ?? ""} horas de uso`;
+  const defaultTitle = `${machine.title} | ${condicion} | ${machine.location ?? "Colombia"} — Consumaquinayequipos`;
+  const defaultDesc = `${machine.title}. ${machine.location ?? ""}. ${isNew ? "Equipo nuevo, 0 horas de uso." : `${machine.hours?.toLocaleString()} ${machine.usage_type === "km" ? "km" : "horas"} de uso.`} Motor Cummins 173 HP. Contáctanos: +57 310 575 3752.`;
+
+  const seoTitle = (machine as any).seo_title || defaultTitle;
+  const seoDesc = (machine as any).seo_description || defaultDesc;
+  const canonical = `https://consumaquinayequipos.com/maquina/${id}/landing`;
+  const ogImage = machine.images?.[0];
+
   return {
-    title: `${machine.title}${price ? ` | ${price}` : ""} — Cali, Colombia`,
-    description: `${machine.title}. ${machine.location}. ${machine.hours === 0 ? "Equipo nuevo." : `${machine.hours.toLocaleString()} horas de uso.`} Contáctanos por WhatsApp: +57 310 575 3752.`,
-    openGraph: { title: machine.title, images: machine.images?.[0] ? [{ url: machine.images[0] }] : [] },
-    robots: { index: true, follow: true },
+    title: seoTitle,
+    description: seoDesc,
+    keywords: [
+      machine.title,
+      "Zoomlion ZE215E", "excavadora 21 toneladas", "retroexcavadora 21 toneladas",
+      "excavadora Colombia", "maquinaria pesada Cali", "excavadora nueva Colombia",
+      "Cat 320 Colombia", "Komatsu PC200", "Hitachi ZX200", "Volvo EC220",
+      machine.location ?? "",
+    ].filter(Boolean),
+    alternates: { canonical },
+    openGraph: {
+      title: seoTitle,
+      description: seoDesc,
+      type: "website",
+      url: canonical,
+      locale: "es_CO",
+      siteName: "Consumaquinayequipos",
+      images: ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: machine.title }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seoTitle,
+      description: seoDesc,
+      images: ogImage ? [ogImage] : [],
+    },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   };
 }
 
@@ -64,40 +97,63 @@ export default async function MachineLandingPage({ params }: { params: Promise<{
     { icon: Star, title: "Precio competitivo", desc: "Alternativa sólida a Cat, Komatsu e Hitachi" },
   ];
 
+  // JSON-LD Schema para esta máquina
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        "name": machine.title,
+        "description": machine.description || `${machine.title} disponible en ${machine.location ?? "Colombia"}.`,
+        "brand": { "@type": "Brand", "name": "Zoomlion" },
+        "model": "ZE215E",
+        "category": "Excavadora hidráulica sobre orugas",
+        "image": machine.images ?? [],
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": machine.currency ?? "COP",
+          "price": machine.price ?? undefined,
+          "availability": "https://schema.org/InStock",
+          "itemCondition": isNew ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition",
+          "url": `https://consumaquinayequipos.com/maquina/${machine.id}/landing`,
+          "seller": { "@type": "Organization", "name": "Consumaquinayequipos", "telephone": "+573105753752" }
+        },
+        "additionalProperty": [
+          { "@type": "PropertyValue", "name": "Peso operativo", "value": "21.5 toneladas" },
+          { "@type": "PropertyValue", "name": "Motor", "value": "Cummins 173 HP" },
+          { "@type": "PropertyValue", "name": "Profundidad de excavación", "value": "6.63 m" },
+          { "@type": "PropertyValue", "name": "Condición", "value": isNew ? "Nuevo" : "Usado" },
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://consumaquinayequipos.com" },
+          { "@type": "ListItem", "position": 2, "name": "Catálogo", "item": "https://consumaquinayequipos.com/#catalogo" },
+          { "@type": "ListItem", "position": 3, "name": machine.title, "item": `https://consumaquinayequipos.com/maquina/${machine.id}/landing` }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-
-      {/* ══════════════════════════════════
-          BARRA SUPERIOR — Urgencia
-      ══════════════════════════════════ */}
-      <div className="bg-red-600 text-white text-center py-2.5 px-4">
-        <p className="text-sm font-bold tracking-wide animate-pulse">
-          🔥 OPORTUNIDAD ÚNICA — Solo 1 unidad disponible en Colombia · Precio especial por tiempo limitado
-        </p>
-      </div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* ══════════════════════════════════
           HERO con galería
       ══════════════════════════════════ */}
       <div className="bg-[#111] relative">
-        {/* Galería */}
         <div className="max-w-5xl mx-auto">
           <MachineGallery images={machine.images} title={machine.title} />
         </div>
-
-        {/* Overlay de badges sobre imagen */}
-        <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
-          {isNew && (
+        {isNew && (
+          <div className="absolute top-4 left-4 z-20">
             <span className="flex items-center gap-1.5 bg-emerald-500 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg">
               <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" /> EQUIPO NUEVO
             </span>
-          )}
-          {machine.is_urgent && (
-            <span className="flex items-center gap-1 bg-red-600 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg animate-pulse">
-              ⚡ VENTA URGENTE
-            </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* ══════════════════════════════════
