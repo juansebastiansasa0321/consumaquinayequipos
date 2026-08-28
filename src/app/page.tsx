@@ -144,18 +144,23 @@ export default async function Home() {
   const waMessage = encodeURIComponent("Hola, vi la Excavadora Zoomlion ZE215E de 21 toneladas en su página web y me gustaría recibir más información y el precio.");
 
   // JSON-LD Schema para Google Rich Results
+  const zoomlionImage = heroMachine?.images?.[0] || "https://consumaquinayequipos.com/zoomlion.png";
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "LocalBusiness",
+        "@id": "https://consumaquinayequipos.com/#business",
         "name": "Consumaquinayequipos",
         "description": "Venta de maquinaria pesada en Cali, Colombia. Excavadoras, minicargadores y volquetas para minería e infraestructura.",
         "url": "https://consumaquinayequipos.com",
         "telephone": "+573105753752",
         "email": "consumaquinayequipos@icloud.com",
+        "image": zoomlionImage,
+        "priceRange": "$$$",
         "address": {
           "@type": "PostalAddress",
+          "streetAddress": "Cali",
           "addressLocality": "Cali",
           "addressRegion": "Valle del Cauca",
           "addressCountry": "CO"
@@ -169,26 +174,35 @@ export default async function Home() {
       },
       {
         "@type": "Product",
+        "@id": "https://consumaquinayequipos.com/maquina/4/landing#product",
         "name": "Excavadora Zoomlion ZE215E 21 Toneladas",
-        "description": "Excavadora hidráulica sobre orugas Zoomlion ZE215E de 21 toneladas. Motor Cummins 4BT3.9-C173, potencia 173 HP, profundidad de excavación 6.63 m. Equipo nuevo disponible en Cali, Colombia.",
+        "description": "Excavadora hidráulica sobre orugas Zoomlion ZE215E de 21 toneladas. Motor Cummins 173 HP, profundidad de excavación 6.63 m. Equipo nuevo disponible en Cali, Colombia. Despacho a todo el país.",
+        "image": [zoomlionImage],
         "brand": { "@type": "Brand", "name": "Zoomlion" },
         "model": "ZE215E",
+        "sku": "ZOOMLION-ZE215E-21T",
+        "mpn": "ZE215E",
         "category": "Excavadora hidráulica sobre orugas",
+        "url": "https://consumaquinayequipos.com/maquina/4/landing",
         "offers": {
           "@type": "Offer",
+          "url": "https://consumaquinayequipos.com/maquina/4/landing",
           "priceCurrency": "COP",
+          "price": "0",
+          "priceSpecification": {
+            "@type": "PriceSpecification",
+            "priceCurrency": "COP",
+            "description": "Precio a convenir. Contáctenos para cotización."
+          },
           "availability": "https://schema.org/InStock",
           "itemCondition": "https://schema.org/NewCondition",
-          "seller": { "@type": "Organization", "name": "Consumaquinayequipos" },
-          "areaServed": "CO"
-        },
-        "additionalProperty": [
-          { "@type": "PropertyValue", "name": "Peso operativo", "value": "21 toneladas" },
-          { "@type": "PropertyValue", "name": "Motor", "value": "Cummins 173 HP" },
-          { "@type": "PropertyValue", "name": "Profundidad de excavación", "value": "6.63 m" },
-          { "@type": "PropertyValue", "name": "Condición", "value": "Nuevo" },
-          { "@type": "PropertyValue", "name": "Ubicación", "value": "Cali, Valle del Cauca" }
-        ]
+          "seller": {
+            "@type": "Organization",
+            "name": "Consumaquinayequipos",
+            "url": "https://consumaquinayequipos.com",
+            "telephone": "+573105753752"
+          }
+        }
       }
     ]
   };
