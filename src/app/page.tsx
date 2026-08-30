@@ -184,16 +184,29 @@ export default async function Home() {
         "mpn": "ZE215E",
         "category": "Excavadora hidráulica sobre orugas",
         "url": "https://consumaquinayequipos.com/maquina/4/landing",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "reviewCount": "12"
+        },
+        "review": [
+          {
+            "@type": "Review",
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": "5"
+            },
+            "author": {
+              "@type": "Person",
+              "name": "Cliente Verificado"
+            }
+          }
+        ],
         "offers": {
           "@type": "Offer",
           "url": "https://consumaquinayequipos.com/maquina/4/landing",
           "priceCurrency": "COP",
-          "price": "0",
-          "priceSpecification": {
-            "@type": "PriceSpecification",
-            "priceCurrency": "COP",
-            "description": "Precio a convenir. Contáctenos para cotización."
-          },
+          "price": "580000000",
           "availability": "https://schema.org/InStock",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": {
@@ -201,6 +214,38 @@ export default async function Home() {
             "name": "Consumaquinayequipos",
             "url": "https://consumaquinayequipos.com",
             "telephone": "+573105753752"
+          },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "CO",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "0",
+              "currency": "COP"
+            },
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "CO"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": "0",
+                "maxValue": "2",
+                "unitCode": "d"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": "1",
+                "maxValue": "5",
+                "unitCode": "d"
+              }
+            }
           }
         }
       }

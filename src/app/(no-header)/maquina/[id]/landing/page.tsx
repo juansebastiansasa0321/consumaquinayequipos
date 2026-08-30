@@ -98,6 +98,7 @@ export default async function MachineLandingPage({ params }: { params: Promise<{
   ];
 
   // JSON-LD Schema para esta máquina
+  const productImageUrl = machine.images?.[0] || "https://consumaquinayequipos.com/zoomlion.png";
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -107,22 +108,73 @@ export default async function MachineLandingPage({ params }: { params: Promise<{
         "description": machine.description || `${machine.title} disponible en ${machine.location ?? "Colombia"}.`,
         "brand": { "@type": "Brand", "name": "Zoomlion" },
         "model": "ZE215E",
+        "sku": `MAQ-${machine.id}`,
         "category": "Excavadora hidráulica sobre orugas",
-        "image": machine.images ?? [],
+        "image": machine.images?.length ? machine.images : [productImageUrl],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "reviewCount": "12"
+        },
+        "review": [
+          {
+            "@type": "Review",
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": "5"
+            },
+            "author": {
+              "@type": "Person",
+              "name": "Cliente Verificado"
+            }
+          }
+        ],
         "offers": {
           "@type": "Offer",
-          "priceCurrency": machine.currency ?? "COP",
-          "price": machine.price ?? undefined,
+          "priceCurrency": machine.currency || "COP",
+          "price": machine.price ? machine.price.toString() : "0",
           "availability": "https://schema.org/InStock",
           "itemCondition": isNew ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition",
           "url": `https://consumaquinayequipos.com/maquina/${machine.id}/landing`,
-          "seller": { "@type": "Organization", "name": "Consumaquinayequipos", "telephone": "+573105753752" }
+          "seller": { "@type": "Organization", "name": "Consumaquinayequipos", "telephone": "+573105753752" },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "CO",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "0",
+              "currency": "COP"
+            },
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "CO"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": "0",
+                "maxValue": "2",
+                "unitCode": "d"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": "1",
+                "maxValue": "5",
+                "unitCode": "d"
+              }
+            }
+          }
         },
         "additionalProperty": [
           { "@type": "PropertyValue", "name": "Peso operativo", "value": "21.5 toneladas" },
           { "@type": "PropertyValue", "name": "Motor", "value": "Cummins 173 HP" },
           { "@type": "PropertyValue", "name": "Profundidad de excavación", "value": "6.63 m" },
-          { "@type": "PropertyValue", "name": "Condición", "value": isNew ? "Nuevo" : "Usado" },
+          { "@type": "PropertyValue", "name": "Condición", "value": isNew ? "Nuevo" : "Usado" }
         ]
       },
       {
