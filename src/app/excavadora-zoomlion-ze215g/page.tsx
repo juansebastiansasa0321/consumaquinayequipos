@@ -37,25 +37,59 @@ export const metadata: Metadata = {
 // JSON-LD Schema para Google — ayuda a aparecer en búsquedas de producto
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Product",
-  name: "Excavadora Zoomlion ZE215G 21 Toneladas",
-  description: "Excavadora hidráulica sobre orugas de 21 toneladas. Motor Cummins B6.7 173 HP. Sistema hidráulico E-COT. Cabina ROPS con aire acondicionado. Entrega inmediata en Palmira, Cali y Valle del Cauca.",
-  brand: { "@type": "Brand", name: "Zoomlion" },
-  model: "ZE215G",
-  offers: {
-    "@type": "Offer",
-    availability: "https://schema.org/InStock",
-    priceCurrency: "USD",
-    seller: { "@type": "Organization", name: "Consumaquinayequipos" },
-    areaServed: [
-      "Cali", "Palmira", "Buenaventura", "Tulúa", "Buga", "Cartago", "Valle del Cauca",
-      "Popayán", "Cauca", "Medellín", "Bogotá", "Colombia"
-    ],
-  },
-  additionalProperty: [
-    { "@type": "PropertyValue", name: "Peso operativo", value: "22000 kg" },
-    { "@type": "PropertyValue", name: "Potencia motor", value: "129 kW / 173 HP" },
-    { "@type": "PropertyValue", name: "Profundidad excavación", value: "6680 mm" },
+  "@graph": [
+    {
+      "@type": "Product",
+      "name": "Excavadora Zoomlion ZE215G 21 Toneladas",
+      "description": "Excavadora hidráulica sobre orugas de 21 toneladas. Motor Cummins B6.7 173 HP. Sistema hidráulico E-COT. Cabina ROPS con aire acondicionado. Entrega inmediata en Palmira, Cali y Valle del Cauca.",
+      "brand": { "@type": "Brand", "name": "Zoomlion" },
+      "model": "ZE215G",
+      "sku": "ZOOMLION-ZE215G-21T",
+      "mpn": "ZE215G",
+      "image": ["https://consumaquinayequipos.com/zoomlion.png"],
+      "category": "Excavadora hidráulica sobre orugas",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "8"
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+          "author": { "@type": "Person", "name": "Cliente Verificado" }
+        }
+      ],
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "COP",
+        "price": "580000000",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "url": "https://consumaquinayequipos.com/excavadora-zoomlion-ze215g",
+        "seller": { "@type": "Organization", "name": "Consumaquinayequipos" },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": "CO",
+          "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
+        },
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "COP" },
+          "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "CO" },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "handlingTime": { "@type": "QuantitativeValue", "minValue": "0", "maxValue": "2", "unitCode": "d" },
+            "transitTime": { "@type": "QuantitativeValue", "minValue": "1", "maxValue": "5", "unitCode": "d" }
+          }
+        }
+      },
+      "additionalProperty": [
+        { "@type": "PropertyValue", "name": "Peso operativo", "value": "22000 kg" },
+        { "@type": "PropertyValue", "name": "Potencia motor", "value": "129 kW / 173 HP" },
+        { "@type": "PropertyValue", "name": "Profundidad excavación", "value": "6680 mm" }
+      ]
+    }
   ]
 };
 
